@@ -10,11 +10,11 @@ class Window:
 
     @property
     def width(self):
-        return self.__width
+        return self._width
 
     @property
     def height(self):
-        return  self.__height
+        return self._height
 
     def newWindow(self, title):
         self._display = pygame.display.set_mode((self._width, self._height), pygame.RESIZABLE)

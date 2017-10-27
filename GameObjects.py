@@ -28,7 +28,3 @@ class GameObject:
     @property
     def object(self):
         return self._object
-
-    @object.setter
-    def object(self, object):
-        self._object = object

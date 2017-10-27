@@ -5,7 +5,7 @@ from GameObjects import GameObject
 class Goose(GameObject):
     def __init__(self, images, posX, posY):
         GameObject.__init__(self)
-        self.object = images
+        self._object = images
         self.x = posX
         self.y = posY
         self.width = images[0].get_width
