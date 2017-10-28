@@ -8,5 +8,5 @@ class Goose(GameObject):
         self._object = images
         self.x = posX
         self.y = posY
-        self.width = images[0].get_width
-        self.height = images[0].get_height
+        self._width = images[0].get_width()
+        self._height = images[0].get_height()

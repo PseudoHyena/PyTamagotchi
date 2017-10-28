@@ -47,6 +47,8 @@ def SplashScreen():
 
         for e in pygame.event.get():
             if (e.type == pygame.KEYDOWN):
+                pygame.mixer.music.stop()
+                pygame.display.quit()
                 return
 
         if (time.time() - _time >= 0.6):
@@ -81,6 +83,7 @@ def SplashScreen():
                 while time.time() - _time <= 3:
                     pass
 
+                pygame.display.quit()
                 return
 
             gooseAnimationNumber += 1 if gooseAnimationNumber == 1 or gooseAnimationNumber == 0 else -1

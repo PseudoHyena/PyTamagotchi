@@ -13,17 +13,9 @@ class GameObject:
     def width(self):
         return self._width
 
-    @width.setter
-    def width(self, width):
-        self._width = width
-
     @property
     def height(self):
         return self._width
-
-    @height.setter
-    def height(self, height):
-        self._height = height
 
     @property
     def object(self):

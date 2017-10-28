@@ -16,8 +16,8 @@ class Window:
     def height(self):
         return self._height
 
-    def newWindow(self, title):
-        self._display = pygame.display.set_mode((self._width, self._height), pygame.RESIZABLE)
+    def newWindow(self, title, mode = 0):
+        self._display = pygame.display.set_mode((self._width, self._height), mode)
         self._display.fill(self._color)
         pygame.display.set_caption(title)
         pygame.display.flip()
