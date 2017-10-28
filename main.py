@@ -13,7 +13,7 @@ myFont = pygame.font.SysFont("Comic Sans Ms", 22)
 
 #######################################
 
-version = 0.1
+version = 0.3
 displayWidth = 854
 displayHeight = 480
 title = "Tamagotchi PC ver %f" % version
