@@ -2,11 +2,11 @@ import pygame
 from GameObjects import GameObject
 
 class Button(GameObject):
-    def __init__(self, image, text, font, func):
+    def __init__(self, image, text, font):
         GameObject.__init__(self)
-        self._object = image
+        self._image = image
+        self._object = self._image
         self._textObj = font.render(text, False, (0, 0, 0)).convert()
-        self._func = func
         self.x = 0
         self.y = 0
         self._width = image.get_width()
@@ -18,7 +18,8 @@ class Button(GameObject):
     def text(self):
         return self._textObj
 
-    @property
-    def func(self):
-        self._func()
+    def setText(self, string, font):
+        self._textObj = font.render(string, False, (0, 0, 0)).convert()
+
+
 

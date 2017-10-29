@@ -15,7 +15,7 @@ class GameObject:
 
     @property
     def height(self):
-        return self._width
+        return self._height
 
     @property
     def object(self):
