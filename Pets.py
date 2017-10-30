@@ -11,6 +11,7 @@ class Goose(GameObject):
         self._width = images[0].get_width()
         self._height = images[0].get_height()
 
+#Класс питомцев
 class Pet(GameObject):
     def __init__(self, image):
         GameObject.__init__(self)
@@ -19,3 +20,5 @@ class Pet(GameObject):
         self.y = 0
         self._width = image.get_width()
         self._height = image.get_height()
+        self.hungerLevel = 0
+        self.moodLevel = 0
