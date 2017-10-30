@@ -3,6 +3,7 @@ import os
 from Colors import Color
 from Window import Window
 from SplashScreen import SplashScreen
+from GameLoop import gameLoop
 from  Button import Button
 
 ######################################
@@ -388,7 +389,10 @@ while True:
                         saveThree_button.y = (displayHeight - saveThree_button.height) // 2 + 120
 
             elif (choiseSaveMenu_active):
-                pass
+
+                if (pygame.mouse.get_pos()[0] >= saveOne_button.x and pygame.mouse.get_pos()[0] <= saveOne_button.x + saveOne_button.width):
+                    if (pygame.mouse.get_pos()[1] >= saveOne_button.y and pygame.mouse.get_pos()[1] <= saveOne_button.y + saveOne_button.height):
+                        gameLoop(displayWidth, displayHeight, isFullscreen, title)
 
     display.blit(background, (0, 0))
     background.blit(logo, ((displayWidth - logoWidth) // 2, (displayHeight - logoHeight) // 2 - 150))
