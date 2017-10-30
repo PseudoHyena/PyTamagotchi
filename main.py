@@ -3,7 +3,7 @@ import os
 from Colors import Color
 from Window import Window
 from SplashScreen import SplashScreen
-from GameLoop import gameLoop
+from Session import gameLoop
 from  Button import Button
 
 ######################################
