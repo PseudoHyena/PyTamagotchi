@@ -41,11 +41,39 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
 
     ########################################
 
-    #Инициализация окна, фона
+    #Загрузка фоновых спрайтов
+    background_images = []
+
+    background_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Backgrounds\\0-3.png").convert(),
+                                 (displayWidth, displayHeight)))
+    background_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Backgrounds\\3-5.png").convert(),
+                               (displayWidth, displayHeight)))
+    background_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Backgrounds\\5-6.png").convert(),
+                               (displayWidth, displayHeight)))
+    background_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Backgrounds\\6-8.png").convert(),
+                               (displayWidth, displayHeight)))
+    background_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Backgrounds\\8-12.png").convert(),
+                               (displayWidth, displayHeight)))
+    background_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Backgrounds\\12-15.png").convert(),
+                               (displayWidth, displayHeight)))
+    background_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Backgrounds\\15-17.png").convert(),
+                               (displayWidth, displayHeight)))
+    background_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Backgrounds\\17-19.png").convert(),
+                               (displayWidth, displayHeight)))
+    background_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Backgrounds\\19-21.png").convert(),
+                               (displayWidth, displayHeight)))
+    background_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Backgrounds\\21-23.png").convert(),
+                               (displayWidth, displayHeight)))
+    background_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Backgrounds\\23-0.png").convert(),
+                               (displayWidth, displayHeight)))
+    background = None
+    background_stage = 0
+
+    ########################################
+
+    #Инициализация окна
     window = Window(displayWidth, displayHeight, Color().black)
     display = window.newWindow(title, pygame.FULLSCREEN if isFullscreen else 0)
-    img = pygame.transform.scale(pygame.image.load_extended("Sprites\\Room.png").convert(), (displayWidth, displayHeight))
-    background = img.copy()
 
     #########################################
 
@@ -122,7 +150,32 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                     isChickenLeg_food_target_active = False
 
         #Отрисовка и обновление
-        background = img.copy()
+
+        if (hour >= 0 and hour <= 3):
+            background_stage = 0
+        elif (hour <= 5):
+            background_stage = 1
+        elif (hour <= 6):
+            background_stage = 2
+        elif (hour <= 8):
+            background_stage = 3
+        elif (hour <= 12):
+            background_stage = 4
+        elif (hour <= 15):
+            background_stage = 5
+        elif (hour <= 17):
+            background_stage = 6
+        elif (hour <= 19):
+            background_stage = 7
+        elif (hour <= 21):
+            background_stage = 8
+        elif (hour <= 23):
+            background_stage = 9
+        elif (hour <= 0):
+            background_stage = 10
+
+        background = background_images[background_stage].copy()
+        display.blit(background, (0, 0))
         background.blit(pet.object, (pet.x, pet.y))
 
         background.blit(chickenLeg_food.object, (chickenLeg_food.x, chickenLeg_food.y))
