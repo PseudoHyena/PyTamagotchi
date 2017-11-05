@@ -5,15 +5,17 @@ from Window import Window
 from SplashScreen import SplashScreen
 from Session import gameLoop
 from  Button import Button
+from Save import User
 
 ######################################
 
-version = 0.5
-title = "Tamagotchi PC ver %f" % version
+#Игровая информация
+version = 0.6
+title = "Tamagotchi PC ver %f - demo" % version
 
 ######################################
 
-#Video modes
+#Режимы видео
 WVGA = (854, 480,)
 HD = (1280, 720,)
 FULLHD = (1920, 1080,)
@@ -83,6 +85,7 @@ else:
 config_file.close()
 ######################################
 
+#Инициализация движка и шрифта
 pygame.init()
 pygame.font.init()
 
@@ -90,8 +93,12 @@ myFont = pygame.font.SysFont("Comic Sans Ms", 22)
 
 #######################################
 
+#Заставка
 SplashScreen()
 
+#######################################
+
+#Инициализация окна, фона, логотипа
 window = Window(displayWidth, displayHeight, Color().black)
 display = window.newWindow(title, (pygame.FULLSCREEN if isFullscreen == True else 0))
 
@@ -168,12 +175,16 @@ saveThree_button.y = (displayHeight - saveThree_button.height) // 2 + 120
 
 #######################################
 
+
+#Игровой цикл меню
 while True:
+    #Обработка событий
     for e in pygame.event.get():
         if (e.type == pygame.QUIT):
             exit()
 
         if (e.type == pygame.KEYDOWN):
+            #Обработка события возвращения в меню
             if (e.key == pygame.K_ESCAPE):
                 background = pygame.image.load_extended("Sprites\\MenuBackground.png").convert()
                 background = pygame.transform.scale(background, (displayWidth, displayHeight))
@@ -181,7 +192,10 @@ while True:
                 choiseSaveMenu_active = False
                 mainMenu_active = True
 
+        #Обработка событий нажатия на кнопки
         if (e.type == pygame.MOUSEBUTTONDOWN):
+
+            #Обработка события нажатия на основные кнопки меню
             if (mainMenu_active):
 
                 if (pygame.mouse.get_pos()[0] >= exit_button.x and pygame.mouse.get_pos()[0] <= exit_button.x + exit_button.width):
@@ -202,6 +216,7 @@ while True:
                         choiseSaveMenu_active = True
                         mainMenu_active = False
 
+            #Обработка событий выбора разрешения и фуллскрина, переназначение положений кнопок
             elif (resolutionSettings_active):
 
                 if (pygame.mouse.get_pos()[0] >= resWVGA_button.x and pygame.mouse.get_pos()[0] <= resWVGA_button.x + resWVGA_button.width):
@@ -388,12 +403,25 @@ while True:
                         saveThree_button.x = (displayWidth - saveThree_button.width) // 2
                         saveThree_button.y = (displayHeight - saveThree_button.height) // 2 + 120
 
+            #Обработка событий выбора сохранений
             elif (choiseSaveMenu_active):
 
                 if (pygame.mouse.get_pos()[0] >= saveOne_button.x and pygame.mouse.get_pos()[0] <= saveOne_button.x + saveOne_button.width):
                     if (pygame.mouse.get_pos()[1] >= saveOne_button.y and pygame.mouse.get_pos()[1] <= saveOne_button.y + saveOne_button.height):
-                        gameLoop(displayWidth, displayHeight, isFullscreen, title)
+                        user = User("Saves\\save_1.xml")
+                        gameLoop(user, displayWidth, displayHeight, isFullscreen, title, myFont)
 
+                if (pygame.mouse.get_pos()[0] >= saveTwo_button.x and pygame.mouse.get_pos()[0] <= saveTwo_button.x + saveTwo_button.width):
+                    if (pygame.mouse.get_pos()[1] >= saveTwo_button.y and pygame.mouse.get_pos()[1] <= saveTwo_button.y + saveTwo_button.height):
+                        user = User("Saves\\save_2.xml")
+                        gameLoop(user, displayWidth, displayHeight, isFullscreen, title, myFont)
+
+                if (pygame.mouse.get_pos()[0] >= saveThree_button.x and pygame.mouse.get_pos()[0] <= saveThree_button.x + saveThree_button.width):
+                    if (pygame.mouse.get_pos()[1] >= saveThree_button.y and pygame.mouse.get_pos()[1] <= saveThree_button.y + saveThree_button.height):
+                        user = User("Saves\\save_3.xml")
+                        gameLoop(user, displayWidth, displayHeight, isFullscreen, title, myFont)
+
+    #Отрисовка и обновление
     display.blit(background, (0, 0))
     background.blit(logo, ((displayWidth - logoWidth) // 2, (displayHeight - logoHeight) // 2 - 150))
 

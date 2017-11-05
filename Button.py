@@ -1,6 +1,7 @@
 import pygame
 from GameObjects import GameObject
 
+#Класс кнопок
 class Button(GameObject):
     def __init__(self, image, text, font):
         GameObject.__init__(self)

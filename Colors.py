@@ -1,4 +1,4 @@
-#Класс цветов
+#Коллекция цветов
 class Color:
     def __init__(self):
         self._white = (255, 255, 255,)
