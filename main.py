@@ -102,8 +102,7 @@ SplashScreen()
 window = Window(displayWidth, displayHeight, Color().black)
 display = window.newWindow(title, (pygame.FULLSCREEN if isFullscreen == True else 0))
 
-background = pygame.image.load_extended("Sprites\\MenuBackground.png").convert()
-background = pygame.transform.scale(background, (displayWidth, displayHeight))
+background_image = pygame.transform.scale(pygame.image.load_extended("Sprites\\MenuBackground.png").convert(), (displayWidth, displayHeight))
 
 logo = pygame.image.load_extended("Sprites\\Logo.png").convert_alpha()
 logoWidth = logo.get_width()
@@ -112,69 +111,94 @@ logoHeight = logo.get_height()
 #######################################
 
 #Кнопки
-buttonImage = pygame.image.load_extended("Sprites\\Button.png").convert_alpha()
+button_image = pygame.image.load_extended("Sprites\\Button.png").convert_alpha()
+miniButton_image = pygame.image.load_extended("Sprites\\MiniButton.png").convert_alpha()
 
 mainMenu_active = True
 resolutionSettings_active = False
 choiseSaveMenu_active = False
+choisePetMenu_active = False
 
 #Settings кнопка
 
-settings_button = Button(buttonImage.copy(), "Settings", myFont)
-settings_button.x = (displayWidth - settings_button.width) // 2
-settings_button.y = (displayHeight - settings_button.height) // 2 + 60
+settings_button = Button(button_image.copy(), "Settings", myFont)
 
 #####
 
-resWVGA_button = Button(buttonImage.copy(), "854x480", myFont)
-resWVGA_button.x = (displayWidth - resWVGA_button.width) // 2
-resWVGA_button.y = (displayHeight - resWVGA_button.height) // 2
+resWVGA_button = Button(button_image.copy(), "854x480", myFont)
 
-resHD_button = Button(buttonImage.copy(), "1280x720", myFont)
-resHD_button.x = (displayWidth - resHD_button.width) // 2
-resHD_button.y = (displayHeight - resHD_button.height) // 2 + 60
+resHD_button = Button(button_image.copy(), "1280x720", myFont)
 
-resFULLHD_button = Button(buttonImage.copy(), "1920x1080", myFont)
-resFULLHD_button.x = (displayWidth - resFULLHD_button.width) // 2
-resFULLHD_button.y = (displayHeight - resFULLHD_button.height) // 2 + 120
+resFULLHD_button = Button(button_image.copy(), "1920x1080", myFont)
 
-resFullScreen_button = Button(buttonImage.copy(), "Fullscreen: " + ("on" if isFullscreen else "off"), myFont)
-resFullScreen_button.x = (displayWidth - resFullScreen_button.width) // 2
-resFullScreen_button.y = (displayHeight - resFullScreen_button.height) // 2 + 180
+resFullScreen_button = Button(button_image.copy(), "Fullscreen: " + ("on" if isFullscreen else "off"), myFont)
 
 #####
 
 #exit кнопка
 
-exit_button = Button(buttonImage.copy(), "Exit", myFont)
-exit_button.x = (displayWidth - exit_button.width) // 2
-exit_button.y = (displayHeight - exit_button.height) // 2 + 120
-
+exit_button = Button(button_image.copy(), "Exit", myFont)
 
 #Play кнопка
 
-play_button = Button(buttonImage.copy(), "Play", myFont)
-play_button.x = (displayWidth - play_button.width) // 2
-play_button.y = (displayHeight - play_button.height) // 2
+play_button = Button(button_image.copy(), "Play", myFont)
 
 #####
 
-saveOne_button = Button(buttonImage.copy(), "Save 1", myFont)
-saveOne_button.x = (displayWidth - saveOne_button.width) // 2
-saveOne_button.y = (displayHeight - saveOne_button.height) // 2
+saveOne_button = Button(button_image.copy(), "Save 1", myFont)
 
-saveTwo_button = Button(buttonImage.copy(), "Save 2", myFont)
-saveTwo_button.x = (displayWidth - saveTwo_button.width) // 2
-saveTwo_button.y = (displayHeight - saveTwo_button.height) // 2 + 60
+saveTwo_button = Button(button_image.copy(), "Save 2", myFont)
 
-saveThree_button = Button(buttonImage.copy(), "Save 3", myFont)
-saveThree_button.x = (displayWidth - saveThree_button.width) // 2
-saveThree_button.y = (displayHeight - saveThree_button.height) // 2 + 120
+saveThree_button = Button(button_image.copy(), "Save 3", myFont)
 
 #####
+
+back_button = Button(miniButton_image.copy(), "Back", myFont)
+
+next_button = Button(miniButton_image.copy(), "Next", myFont)
 
 #######################################
 
+def locateButtons():
+    play_button.x = (displayWidth - play_button.width) // 2
+    play_button.y = (displayHeight - play_button.height) // 2
+
+    settings_button.x = (displayWidth - settings_button.width) // 2
+    settings_button.y = (displayHeight - settings_button.height) // 2 + 60
+
+    exit_button.x = (displayWidth - exit_button.width) // 2
+    exit_button.y = (displayHeight - exit_button.height) // 2 + 120
+
+    resWVGA_button.x = (displayWidth - resWVGA_button.width) // 2
+    resWVGA_button.y = (displayHeight - resWVGA_button.height) // 2
+
+    resHD_button.x = (displayWidth - resHD_button.width) // 2
+    resHD_button.y = (displayHeight - resHD_button.height) // 2 + 60
+
+    resFULLHD_button.x = (displayWidth - resFULLHD_button.width) // 2
+    resFULLHD_button.y = (displayHeight - resFULLHD_button.height) // 2 + 120
+
+    resFullScreen_button.x = (displayWidth - resFullScreen_button.width) // 2
+    resFullScreen_button.y = (displayHeight - resFullScreen_button.height) // 2 + 180
+
+    saveOne_button.x = (displayWidth - saveOne_button.width) // 2
+    saveOne_button.y = (displayHeight - saveOne_button.height) // 2
+
+    saveTwo_button.x = (displayWidth - saveTwo_button.width) // 2
+    saveTwo_button.y = (displayHeight - saveTwo_button.height) // 2 + 60
+
+    saveThree_button.x = (displayWidth - saveThree_button.width) // 2
+    saveThree_button.y = (displayHeight - saveThree_button.height) // 2 + 120
+
+    back_button.x = (displayWidth - button_image.get_width()) // 2
+    back_button.y = (displayHeight - back_button.height) // 2 + displayHeight // 4
+
+    next_button.x = back_button.x + back_button.width + 40
+    next_button.y = (displayHeight - next_button.height) // 2 + displayHeight // 4
+
+locateButtons()
+
+#######################################
 
 #Игровой цикл меню
 while True:
@@ -186,10 +210,9 @@ while True:
         if (e.type == pygame.KEYDOWN):
             #Обработка события возвращения в меню
             if (e.key == pygame.K_ESCAPE):
-                background = pygame.image.load_extended("Sprites\\MenuBackground.png").convert()
-                background = pygame.transform.scale(background, (displayWidth, displayHeight))
                 resolutionSettings_active = False
                 choiseSaveMenu_active = False
+                choisePetMenu_active = False
                 mainMenu_active = True
 
         #Обработка событий нажатия на кнопки
@@ -204,15 +227,11 @@ while True:
 
                 if (pygame.mouse.get_pos()[0] >= settings_button.x and pygame.mouse.get_pos()[0] <= settings_button.x + settings_button.width):
                     if (pygame.mouse.get_pos()[1] >= settings_button.y and pygame.mouse.get_pos()[1] <= settings_button.y + settings_button.height):
-                        background = pygame.image.load_extended("Sprites\\MenuBackground.png").convert()
-                        background = pygame.transform.scale(background, (displayWidth, displayHeight))
                         resolutionSettings_active = True
                         mainMenu_active = False
 
                 if (pygame.mouse.get_pos()[0] >= play_button.x and pygame.mouse.get_pos()[0] <= play_button.x + play_button.width):
                     if (pygame.mouse.get_pos()[1] >= play_button.y and pygame.mouse.get_pos()[1] <= play_button.y + play_button.height):
-                        background = pygame.image.load_extended("Sprites\\MenuBackground.png").convert()
-                        background = pygame.transform.scale(background, (displayWidth, displayHeight))
                         choiseSaveMenu_active = True
                         mainMenu_active = False
 
@@ -230,38 +249,10 @@ while True:
                         config_file.write("fullscreen=" + str(isFullscreen))
                         config_file.close()
 
-                        background = pygame.image.load_extended("Sprites\\MenuBackground.png").convert()
-                        background = pygame.transform.scale(background, WVGA)
+                        background_image = pygame.image.load_extended("Sprites\\MenuBackground.png").convert()
+                        background_image = pygame.transform.scale(background_image, WVGA)
 
-                        play_button.x = (displayWidth - play_button.width) // 2
-                        play_button.y = (displayHeight - play_button.height) // 2
-
-                        settings_button.x = (displayWidth - settings_button.width) // 2
-                        settings_button.y = (displayHeight - settings_button.height) // 2 + 60
-
-                        exit_button.x = (displayWidth - exit_button.width) // 2
-                        exit_button.y = (displayHeight - exit_button.height) // 2 + 120
-
-                        resWVGA_button.x = (displayWidth - resWVGA_button.width) // 2
-                        resWVGA_button.y = (displayHeight - resWVGA_button.height) // 2
-
-                        resHD_button.x = (displayWidth - resHD_button.width) // 2
-                        resHD_button.y = (displayHeight - resHD_button.height) // 2 + 60
-
-                        resFULLHD_button.x = (displayWidth - resFULLHD_button.width) // 2
-                        resFULLHD_button.y = (displayHeight - resFULLHD_button.height) // 2 + 120
-
-                        resFullScreen_button.x = (displayWidth - resFullScreen_button.width) // 2
-                        resFullScreen_button.y = (displayHeight - resFullScreen_button.height) // 2 + 180
-
-                        saveOne_button.x = (displayWidth - saveOne_button.width) // 2
-                        saveOne_button.y = (displayHeight - saveOne_button.height) // 2
-
-                        saveTwo_button.x = (displayWidth - saveTwo_button.width) // 2
-                        saveTwo_button.y = (displayHeight - saveTwo_button.height) // 2 + 60
-
-                        saveThree_button.x = (displayWidth - saveThree_button.width) // 2
-                        saveThree_button.y = (displayHeight - saveThree_button.height) // 2 + 120
+                        locateButtons()
 
                 if (pygame.mouse.get_pos()[0] >= resHD_button.x and pygame.mouse.get_pos()[0] <= resHD_button.x + resHD_button.width):
                     if (pygame.mouse.get_pos()[1] >= resHD_button.y and pygame.mouse.get_pos()[1] <= resHD_button.y + resHD_button.height):
@@ -274,38 +265,10 @@ while True:
                         config_file.write("fullscreen=" + str(isFullscreen))
                         config_file.close()
 
-                        background = pygame.image.load_extended("Sprites\\MenuBackground.png").convert()
-                        background = pygame.transform.scale(background, HD)
+                        background_image = pygame.image.load_extended("Sprites\\MenuBackground.png").convert()
+                        background_image = pygame.transform.scale(background_image, HD)
 
-                        play_button.x = (displayWidth - play_button.width) // 2
-                        play_button.y = (displayHeight - play_button.height) // 2
-
-                        settings_button.x = (displayWidth - settings_button.width) // 2
-                        settings_button.y = (displayHeight - settings_button.height) // 2 + 60
-
-                        exit_button.x = (displayWidth - exit_button.width) // 2
-                        exit_button.y = (displayHeight - exit_button.height) // 2 + 120
-
-                        resWVGA_button.x = (displayWidth - resWVGA_button.width) // 2
-                        resWVGA_button.y = (displayHeight - resWVGA_button.height) // 2
-
-                        resHD_button.x = (displayWidth - resHD_button.width) // 2
-                        resHD_button.y = (displayHeight - resHD_button.height) // 2 + 60
-
-                        resFULLHD_button.x = (displayWidth - resFULLHD_button.width) // 2
-                        resFULLHD_button.y = (displayHeight - resFULLHD_button.height) // 2 + 120
-
-                        resFullScreen_button.x = (displayWidth - resFullScreen_button.width) // 2
-                        resFullScreen_button.y = (displayHeight - resFullScreen_button.height) // 2 + 180
-
-                        saveOne_button.x = (displayWidth - saveOne_button.width) // 2
-                        saveOne_button.y = (displayHeight - saveOne_button.height) // 2
-
-                        saveTwo_button.x = (displayWidth - saveTwo_button.width) // 2
-                        saveTwo_button.y = (displayHeight - saveTwo_button.height) // 2 + 60
-
-                        saveThree_button.x = (displayWidth - saveThree_button.width) // 2
-                        saveThree_button.y = (displayHeight - saveThree_button.height) // 2 + 120
+                        locateButtons()
 
                 if (pygame.mouse.get_pos()[0] >= resFULLHD_button.x and pygame.mouse.get_pos()[0] <= resFULLHD_button.x + resFULLHD_button.width):
                     if (pygame.mouse.get_pos()[1] >= resFULLHD_button.y and pygame.mouse.get_pos()[1] <= resFULLHD_button.y + resFULLHD_button.height):
@@ -318,38 +281,10 @@ while True:
                         config_file.write("fullscreen=" + str(isFullscreen))
                         config_file.close()
 
-                        background = pygame.image.load_extended("Sprites\\MenuBackground.png").convert()
-                        background = pygame.transform.scale(background, FULLHD)
+                        background_image = pygame.image.load_extended("Sprites\\MenuBackground.png").convert()
+                        background_image = pygame.transform.scale(background_image, FULLHD)
 
-                        play_button.x = (displayWidth - play_button.width) // 2
-                        play_button.y = (displayHeight - play_button.height) // 2
-
-                        settings_button.x = (displayWidth - settings_button.width) // 2
-                        settings_button.y = (displayHeight - settings_button.height) // 2 + 60
-
-                        exit_button.x = (displayWidth - exit_button.width) // 2
-                        exit_button.y = (displayHeight - exit_button.height) // 2 + 120
-
-                        resWVGA_button.x = (displayWidth - resWVGA_button.width) // 2
-                        resWVGA_button.y = (displayHeight - resWVGA_button.height) // 2
-
-                        resHD_button.x = (displayWidth - resHD_button.width) // 2
-                        resHD_button.y = (displayHeight - resHD_button.height) // 2 + 60
-
-                        resFULLHD_button.x = (displayWidth - resFULLHD_button.width) // 2
-                        resFULLHD_button.y = (displayHeight - resFULLHD_button.height) // 2 + 120
-
-                        resFullScreen_button.x = (displayWidth - resFullScreen_button.width) // 2
-                        resFullScreen_button.y = (displayHeight - resFullScreen_button.height) // 2 + 180
-
-                        saveOne_button.x = (displayWidth - saveOne_button.width) // 2
-                        saveOne_button.y = (displayHeight - saveOne_button.height) // 2
-
-                        saveTwo_button.x = (displayWidth - saveTwo_button.width) // 2
-                        saveTwo_button.y = (displayHeight - saveTwo_button.height) // 2 + 60
-
-                        saveThree_button.x = (displayWidth - saveThree_button.width) // 2
-                        saveThree_button.y = (displayHeight - saveThree_button.height) // 2 + 120
+                        locateButtons()
 
                 if (pygame.mouse.get_pos()[0] >= resFullScreen_button.x and pygame.mouse.get_pos()[0] <= resFullScreen_button.x + resFullScreen_button.width):
                     if (pygame.mouse.get_pos()[1] >= resFullScreen_button.y and pygame.mouse.get_pos()[1] <= resFullScreen_button.y + resFullScreen_button.height):
@@ -357,51 +292,24 @@ while True:
 
                         if (isFullscreen == False):
                             display = window.newWindow(title, pygame.FULLSCREEN)
-                            resFullScreen_button.setText("Fullscreen: " + "on", myFont)
+                            text = "Fullscreen: on"
                             isFullscreen = True
                         else:
                             display = window.newWindow(title, 0)
-                            resFullScreen_button.setText("Fullscreen: " + "off", myFont)
+                            text = "Fullscreen: off"
                             isFullscreen = False
+
+                        resFullScreen_button = Button(button_image.copy(), text, myFont)
 
                         config_file = open("Config\\config.ini", 'w')
                         config_file.write("resolution=%dx%d\n" % (displayWidth, displayHeight))
                         config_file.write("fullscreen=" + str(isFullscreen))
                         config_file.close()
 
-                        background = pygame.image.load_extended("Sprites\\MenuBackground.png").convert()
-                        background = pygame.transform.scale(background, (displayWidth, displayHeight))
-                        resFullScreen_button.object.blit(buttonImage, (0, 0))
+                        background_image = pygame.image.load_extended("Sprites\\MenuBackground.png").convert()
+                        background_image = pygame.transform.scale(background_image, (displayWidth, displayHeight))
 
-                        play_button.x = (displayWidth - play_button.width) // 2
-                        play_button.y = (displayHeight - play_button.height) // 2
-
-                        settings_button.x = (displayWidth - settings_button.width) // 2
-                        settings_button.y = (displayHeight - settings_button.height) // 2 + 60
-
-                        exit_button.x = (displayWidth - exit_button.width) // 2
-                        exit_button.y = (displayHeight - exit_button.height) // 2 + 120
-
-                        resWVGA_button.x = (displayWidth - resWVGA_button.width) // 2
-                        resWVGA_button.y = (displayHeight - resWVGA_button.height) // 2
-
-                        resHD_button.x = (displayWidth - resHD_button.width) // 2
-                        resHD_button.y = (displayHeight - resHD_button.height) // 2 + 60
-
-                        resFULLHD_button.x = (displayWidth - resFULLHD_button.width) // 2
-                        resFULLHD_button.y = (displayHeight - resFULLHD_button.height) // 2 + 120
-
-                        resFullScreen_button.x = (displayWidth - resFullScreen_button.width) // 2
-                        resFullScreen_button.y = (displayHeight - resFullScreen_button.height) // 2 + 180
-
-                        saveOne_button.x = (displayWidth - saveOne_button.width) // 2
-                        saveOne_button.y = (displayHeight - saveOne_button.height) // 2
-
-                        saveTwo_button.x = (displayWidth - saveTwo_button.width) // 2
-                        saveTwo_button.y = (displayHeight - saveTwo_button.height) // 2 + 60
-
-                        saveThree_button.x = (displayWidth - saveThree_button.width) // 2
-                        saveThree_button.y = (displayHeight - saveThree_button.height) // 2 + 120
+                        locateButtons()
 
             #Обработка событий выбора сохранений
             elif (choiseSaveMenu_active):
@@ -409,20 +317,29 @@ while True:
                 if (pygame.mouse.get_pos()[0] >= saveOne_button.x and pygame.mouse.get_pos()[0] <= saveOne_button.x + saveOne_button.width):
                     if (pygame.mouse.get_pos()[1] >= saveOne_button.y and pygame.mouse.get_pos()[1] <= saveOne_button.y + saveOne_button.height):
                         user = User("Saves\\save_1.xml")
-                        gameLoop(user, displayWidth, displayHeight, isFullscreen, title, myFont)
+                        if (user.isFirstInit == True):
+                            choisePetMenu_active = True
+                            choiseSaveMenu_active = False
+                        #gameLoop(user, displayWidth, displayHeight, isFullscreen, title, myFont)
 
                 if (pygame.mouse.get_pos()[0] >= saveTwo_button.x and pygame.mouse.get_pos()[0] <= saveTwo_button.x + saveTwo_button.width):
                     if (pygame.mouse.get_pos()[1] >= saveTwo_button.y and pygame.mouse.get_pos()[1] <= saveTwo_button.y + saveTwo_button.height):
                         user = User("Saves\\save_2.xml")
-                        gameLoop(user, displayWidth, displayHeight, isFullscreen, title, myFont)
+                        if (user.isFirstInit == True):
+                            choisePetMenu_active = True
+                            choiseSaveMenu_active = False
+                        #gameLoop(user, displayWidth, displayHeight, isFullscreen, title, myFont)
 
                 if (pygame.mouse.get_pos()[0] >= saveThree_button.x and pygame.mouse.get_pos()[0] <= saveThree_button.x + saveThree_button.width):
                     if (pygame.mouse.get_pos()[1] >= saveThree_button.y and pygame.mouse.get_pos()[1] <= saveThree_button.y + saveThree_button.height):
                         user = User("Saves\\save_3.xml")
-                        gameLoop(user, displayWidth, displayHeight, isFullscreen, title, myFont)
+                        if (user.isFirstInit == True):
+                            choisePetMenu_active = True
+                            choiseSaveMenu_active = False
+                        #gameLoop(user, displayWidth, displayHeight, isFullscreen, title, myFont)
 
     #Отрисовка и обновление
-    display.blit(background, (0, 0))
+    background = background_image.copy()
     background.blit(logo, ((displayWidth - logoWidth) // 2, (displayHeight - logoHeight) // 2 - 150))
 
     if (mainMenu_active):
@@ -458,4 +375,12 @@ while True:
         background.blit(saveThree_button.object, (saveThree_button.x, saveThree_button.y))
         saveThree_button.object.blit(saveThree_button.text, (saveThree_button.textX, saveThree_button.textY))
 
+    elif (choisePetMenu_active):
+        background.blit(back_button.object, (back_button.x, back_button.y))
+        back_button.object.blit(back_button.text, (back_button.textX, back_button.textY))
+
+        background.blit(next_button.object, (next_button.x, next_button.y))
+        next_button.object.blit(next_button.text, (next_button.textX, next_button.textY))
+
+    display.blit(background, (0, 0))
     pygame.display.update()

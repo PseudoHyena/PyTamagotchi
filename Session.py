@@ -5,11 +5,11 @@ from Colors import Color
 from Pets import Pet
 from GameObjects import Food
 from Button import Button
-from Save import User
 
 def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
     #Загрузка спрайтов питомцев
     pet_images = []
+    nightPet_images = []
 
     petsSizeX = int(displayWidth / 7.112962963)
     petsSizeY = int(displayHeight / 4)
@@ -19,6 +19,16 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
     pet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\Eagle.png").convert_alpha(), (petsSizeX, petsSizeY)))
     pet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\Owl.png").convert_alpha(), (petsSizeX, petsSizeY)))
     pet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\YellowBird.png").convert_alpha(), (petsSizeX, petsSizeY)))
+
+    nightPet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\BlueBirdNM.png").convert_alpha(), (petsSizeX, petsSizeY)))
+    nightPet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\ChickenNM.png").convert_alpha(), (petsSizeX, petsSizeY)))
+    nightPet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\EagleNM.png").convert_alpha(), (petsSizeX, petsSizeY)))
+    nightPet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\OwlNM.png").convert_alpha(), (petsSizeX, petsSizeY)))
+    nightPet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\YellowBirdNM.png").convert_alpha(), (petsSizeX, petsSizeY)))
+
+    pt = []
+    pt.append(pet_images[0])
+    pt.append(nightPet_images[0])
 
     ######################################
 
@@ -78,7 +88,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
     #########################################
 
     #Инициализация питомца и синхронизация
-    pet = Pet(pet_images[0])
+    pet = Pet(pt)
     pet.x = (displayWidth - pet.width) // 2
     pet.y = (displayHeight - pet.height) // 2 + 60
 
@@ -175,8 +185,11 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
             background_stage = 10
 
         background = background_images[background_stage].copy()
-        display.blit(background, (0, 0))
-        background.blit(pet.object, (pet.x, pet.y))
+
+        if (hour > 21 or hour <= 5):
+            background.blit(pet.object[1], (pet.x, pet.y))
+        else:
+            background.blit(pet.object[0], (pet.x, pet.y))
 
         background.blit(chickenLeg_food.object, (chickenLeg_food.x, chickenLeg_food.y))
 

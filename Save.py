@@ -5,6 +5,7 @@ import os
 class User:
     def __initFile(self, name):
         if (os.path.exists(name) == False):
+            self._isFirstInit = True
             file = open(name, "w")
             file.write("<Session></Session>")
             file.close()
@@ -30,6 +31,7 @@ class User:
             self._xTree.write(name)
 
     def __init__(self, name):
+        self._isFirstInit = False
         self.__initFile(name)
         self._saveXml_file = os.path.join(name)
         self._xTree = ET.parse(self._saveXml_file)
@@ -75,4 +77,8 @@ class User:
     def time(self, curTime):
         self._xRoot.find("Time").text = str(curTime)
         self._xTree.write(self._name)
+
+    @property
+    def isFirstInit(self):
+        return self._isFirstInit
         
