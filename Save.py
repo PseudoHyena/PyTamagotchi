@@ -18,6 +18,7 @@ class User:
 
         if (self._xRoot.find("Pet") == None):
             pet_elem = ET.SubElement(self._xRoot, "Pet")
+            pet_elem.set("object", "None")
             self._xTree.write(name)
 
         if (self._xTree.find("Pet").find("HungerLevel") == None):
@@ -30,14 +31,16 @@ class User:
             moodLevel_elem.text = "50"
             self._xTree.write(name)
 
-    def __init__(self, name):
-        self._isFirstInit = False
+    def __init__(self, name, images):
         self.__initFile(name)
         self._saveXml_file = os.path.join(name)
         self._xTree = ET.parse(self._saveXml_file)
         self._xRoot = self._xTree.getroot()
         self.__checkAttr(name)
         self._name = name
+        self._object = None if self._xRoot.find("Pet").attrib["object"] == "None" else \
+            (images[int(self._xRoot.find("Pet").attrib["object"])],
+             images[int(self._xRoot.find("Pet").attrib["object"]) + 1], )
 
     @property
     def tree(self):
@@ -79,6 +82,10 @@ class User:
         self._xTree.write(self._name)
 
     @property
-    def isFirstInit(self):
-        return self._isFirstInit
+    def object(self):
+        return self._object
+
+    @object.setter
+    def object(self, images):
+        self._object = images
         
