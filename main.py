@@ -158,6 +158,7 @@ back_button = Button(miniButton_image.copy(), "Back", myFont)
 next_button = Button(miniButton_image.copy(), "Next", myFont)
 
 confirm_button = Button(button_image.copy(), "Confirm", myFont)
+confirm_event_number = -1
 
 #######################################
 
@@ -205,43 +206,51 @@ locateButtons()
 
 #######################################
 
-def loadPets():
-    pet_images = []
+pet_images_prefab = []
+pet_images = []
+
+petsSizeX = int(displayWidth / 7.112962963)
+petsSizeY = int(displayHeight / 4)
+
+pet_images_prefab.append(pygame.image.load_extended("Sprites\\Pets\\BlueBird.png").convert_alpha())
+
+pet_images_prefab.append(pygame.image.load_extended("Sprites\\Pets\\BlueBirdNM.png").convert_alpha())
+
+pet_images_prefab.append(pygame.image.load_extended("Sprites\\Pets\\Chicken.png").convert_alpha())
+
+pet_images_prefab.append(pygame.image.load_extended("Sprites\\Pets\\ChickenNM.png").convert_alpha())
+
+pet_images_prefab.append(pygame.image.load_extended("Sprites\\Pets\\Eagle.png").convert_alpha())
+
+pet_images_prefab.append(pygame.image.load_extended("Sprites\\Pets\\EagleNM.png").convert_alpha())
+
+pet_images_prefab.append(pygame.image.load_extended("Sprites\\Pets\\Owl.png").convert_alpha())
+
+pet_images_prefab.append(pygame.image.load_extended("Sprites\\Pets\\OwlNM.png").convert_alpha())
+
+pet_images_prefab.append(pygame.image.load_extended("Sprites\\Pets\\YellowBird.png").convert_alpha())
+
+pet_images_prefab.append(pygame.image.load_extended("Sprites\\Pets\\YellowBirdNM.png").convert_alpha())
+
+def reloadPets_images():
+    global petsSizeX
+    global petsSizeY
+    global pet_images
+    global pet_images_prefab
+    global pet_count
+
+    if (len(pet_images) != 0):
+        pet_images.clear()
 
     petsSizeX = int(displayWidth / 7.112962963)
     petsSizeY = int(displayHeight / 4)
 
-    pet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\BlueBird.png").convert_alpha(),
-                                             (petsSizeX, petsSizeY)))
-    pet_images.append(
-        pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\BlueBirdNM.png").convert_alpha(),
-                               (petsSizeX, petsSizeY)))
+    for i in range(len(pet_images_prefab)):
+        pet_images.append(pygame.transform.scale(pet_images_prefab[i].copy(), (petsSizeX, petsSizeY)))
 
-    pet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\Chicken.png").convert_alpha(),
-                                             (petsSizeX, petsSizeY)))
-    pet_images.append(
-        pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\ChickenNM.png").convert_alpha(),
-                               (petsSizeX, petsSizeY)))
-    pet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\Eagle.png").convert_alpha(),
-                                             (petsSizeX, petsSizeY)))
-    pet_images.append(
-        pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\EagleNM.png").convert_alpha(),
-                               (petsSizeX, petsSizeY)))
-
-    pet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\Owl.png").convert_alpha(),
-                                             (petsSizeX, petsSizeY)))
-    pet_images.append(
-        pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\OwlNM.png").convert_alpha(),
-                               (petsSizeX, petsSizeY)))
-
-    pet_images.append(
-        pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\YellowBird.png").convert_alpha(),
-                               (petsSizeX, petsSizeY)))
-    pet_images.append(
-        pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\YellowBirdNM.png").convert_alpha(),
-                               (petsSizeX, petsSizeY)))
-
-    return pet_images
+reloadPets_images()
+pet_number = 0
+pet_count = len(pet_images) // 2
 
 #######################################
 
@@ -261,7 +270,7 @@ while True:
                 mainMenu_active = True
 
         #Обработка событий нажатия на кнопки
-        if (e.type == pygame.MOUSEBUTTONDOWN):
+        if (e.type == pygame.MOUSEBUTTONDOWN and e.button == 1):
 
             #Обработка события нажатия на основные кнопки меню
             if (mainMenu_active):
@@ -298,6 +307,7 @@ while True:
                         background_image = pygame.transform.scale(background_image, WVGA)
 
                         locateButtons()
+                        reloadPets_images()
 
                 if (pygame.mouse.get_pos()[0] >= resHD_button.x and pygame.mouse.get_pos()[0] <= resHD_button.x + resHD_button.width):
                     if (pygame.mouse.get_pos()[1] >= resHD_button.y and pygame.mouse.get_pos()[1] <= resHD_button.y + resHD_button.height):
@@ -314,6 +324,7 @@ while True:
                         background_image = pygame.transform.scale(background_image, HD)
 
                         locateButtons()
+                        reloadPets_images()
 
                 if (pygame.mouse.get_pos()[0] >= resFULLHD_button.x and pygame.mouse.get_pos()[0] <= resFULLHD_button.x + resFULLHD_button.width):
                     if (pygame.mouse.get_pos()[1] >= resFULLHD_button.y and pygame.mouse.get_pos()[1] <= resFULLHD_button.y + resFULLHD_button.height):
@@ -330,6 +341,7 @@ while True:
                         background_image = pygame.transform.scale(background_image, FULLHD)
 
                         locateButtons()
+                        reloadPets_images()
 
                 if (pygame.mouse.get_pos()[0] >= resFullScreen_button.x and pygame.mouse.get_pos()[0] <= resFullScreen_button.x + resFullScreen_button.width):
                     if (pygame.mouse.get_pos()[1] >= resFullScreen_button.y and pygame.mouse.get_pos()[1] <= resFullScreen_button.y + resFullScreen_button.height):
@@ -361,45 +373,57 @@ while True:
 
                 if (pygame.mouse.get_pos()[0] >= saveOne_button.x and pygame.mouse.get_pos()[0] <= saveOne_button.x + saveOne_button.width):
                     if (pygame.mouse.get_pos()[1] >= saveOne_button.y and pygame.mouse.get_pos()[1] <= saveOne_button.y + saveOne_button.height):
-                        pets = loadPets()
-                        petNumber = 0
-
-                        user = User("Saves\\save_1.xml", pets)
+                        user = User("Saves\\save_1.xml", pet_images)
 
                         if (user.object == None):
                             choisePetMenu_active = True
                             choiseSaveMenu_active = False
-
+                            confirm_event_number = 1
                         else:
                             gameLoop(user, displayWidth, displayHeight, isFullscreen, title, myFont)
 
                 if (pygame.mouse.get_pos()[0] >= saveTwo_button.x and pygame.mouse.get_pos()[0] <= saveTwo_button.x + saveTwo_button.width):
                     if (pygame.mouse.get_pos()[1] >= saveTwo_button.y and pygame.mouse.get_pos()[1] <= saveTwo_button.y + saveTwo_button.height):
-                        pets = loadPets()
-                        petNumber = 0
-
-                        user = User("Saves\\save_2.xml", pets)
+                        user = User("Saves\\save_2.xml", pet_images)
 
                         if (user.object == None):
                             choisePetMenu_active = True
                             choiseSaveMenu_active = False
+                            confirm_event_number = 2
 
                         else:
                             gameLoop(user, displayWidth, displayHeight, isFullscreen, title, myFont)
 
                 if (pygame.mouse.get_pos()[0] >= saveThree_button.x and pygame.mouse.get_pos()[0] <= saveThree_button.x + saveThree_button.width):
                     if (pygame.mouse.get_pos()[1] >= saveThree_button.y and pygame.mouse.get_pos()[1] <= saveThree_button.y + saveThree_button.height):
-                        pets = loadPets()
-                        petNumber = 0
-
-                        user = User("Saves\\save_3.xml", pets)
+                        user = User("Saves\\save_3.xml", pet_images)
 
                         if (user.object == None):
                             choisePetMenu_active = True
                             choiseSaveMenu_active = False
+                            confirm_event_number = 3
 
                         else:
                             gameLoop(user, displayWidth, displayHeight, isFullscreen, title, myFont)
+
+            elif (choisePetMenu_active):
+                if (pygame.mouse.get_pos()[0] >= back_button.x and pygame.mouse.get_pos()[0] <= back_button.x + back_button.width):
+                    if (pygame.mouse.get_pos()[1] >= back_button.y and pygame.mouse.get_pos()[1] <= back_button.y + back_button.height):
+                        if (pet_number == 0):
+                            pet_number = pet_count - 1
+                        else:
+                            pet_number -= 2
+
+                if (pygame.mouse.get_pos()[0] >= next_button.x and pygame.mouse.get_pos()[0] <= next_button.x + next_button.width):
+                    if (pygame.mouse.get_pos()[1] >= next_button.y and pygame.mouse.get_pos()[1] <= next_button.y + next_button.height):
+                        if (pet_number == pet_count - 1):
+                            pet_number = 0
+                        else:
+                            pet_number += 2
+
+                if (pygame.mouse.get_pos()[0] >= confirm_button.x and pygame.mouse.get_pos()[0] <= confirm_button.x + confirm_button.width):
+                    if (pygame.mouse.get_pos()[1] >= confirm_button.y and pygame.mouse.get_pos()[1] <= confirm_button.y + confirm_button.height):
+                        pass
 
     #Отрисовка и обновление
     background = background_image.copy()
@@ -446,7 +470,11 @@ while True:
         next_button.object.blit(next_button.text, (next_button.textX, next_button.textY))
 
         background.blit(confirm_button.object, (confirm_button.x, confirm_button.y))
-        confirm_button.object.blit(confirm_button.text, (confirm_button.textX, confirm_button.textX))
+        confirm_button.object.blit(confirm_button.text, (confirm_button.textX, confirm_button.textY))
+
+        background.blit(pet_images[pet_number].copy(),
+                        ((displayWidth - pet_images[0].get_width()) // 2,
+                         (displayHeight - pet_images[0].get_height()) // 2 + displayHeight // 20))
 
     display.blit(background, (0, 0))
     pygame.display.update()
