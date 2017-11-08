@@ -7,30 +7,6 @@ from GameObjects import Food
 from Button import Button
 
 def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
-    #Загрузка спрайтов питомцев
-    pet_images = []
-    nightPet_images = []
-
-    petsSizeX = int(displayWidth / 7.112962963)
-    petsSizeY = int(displayHeight / 4)
-
-    pet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\BlueBird.png").convert_alpha(), (petsSizeX, petsSizeY)))
-    pet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\Chicken.png").convert_alpha(), (petsSizeX, petsSizeY)))
-    pet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\Eagle.png").convert_alpha(), (petsSizeX, petsSizeY)))
-    pet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\Owl.png").convert_alpha(), (petsSizeX, petsSizeY)))
-    pet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\YellowBird.png").convert_alpha(), (petsSizeX, petsSizeY)))
-
-    nightPet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\BlueBirdNM.png").convert_alpha(), (petsSizeX, petsSizeY)))
-    nightPet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\ChickenNM.png").convert_alpha(), (petsSizeX, petsSizeY)))
-    nightPet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\EagleNM.png").convert_alpha(), (petsSizeX, petsSizeY)))
-    nightPet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\OwlNM.png").convert_alpha(), (petsSizeX, petsSizeY)))
-    nightPet_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Pets\\YellowBirdNM.png").convert_alpha(), (petsSizeX, petsSizeY)))
-
-    pt = []
-    pt.append(pet_images[0])
-    pt.append(nightPet_images[0])
-
-    ######################################
 
     #Загрузка спрайтов еды
     food_images = []
@@ -88,7 +64,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
     #########################################
 
     #Инициализация питомца и синхронизация
-    pet = Pet(pt)
+    pet = Pet(user.images)
     pet.x = (displayWidth - pet.width) // 2
     pet.y = (displayHeight - pet.height) // 2 + 60
 

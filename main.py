@@ -250,7 +250,7 @@ def reloadPets_images():
 
 reloadPets_images()
 pet_number = 0
-pet_count = len(pet_images) // 2
+pet_count = len(pet_images)
 
 #######################################
 
@@ -373,57 +373,76 @@ while True:
 
                 if (pygame.mouse.get_pos()[0] >= saveOne_button.x and pygame.mouse.get_pos()[0] <= saveOne_button.x + saveOne_button.width):
                     if (pygame.mouse.get_pos()[1] >= saveOne_button.y and pygame.mouse.get_pos()[1] <= saveOne_button.y + saveOne_button.height):
-                        user = User("Saves\\save_1.xml", pet_images)
+                        user = User("Saves\\save_1.xml")
 
-                        if (user.object == None):
+                        if (user.pet_number == None):
                             choisePetMenu_active = True
                             choiseSaveMenu_active = False
                             confirm_event_number = 1
+
                         else:
+                            user.setImages(pet_images[user.pet_number], pet_images[user.pet_number + 1])
                             gameLoop(user, displayWidth, displayHeight, isFullscreen, title, myFont)
+
+                            mainMenu_active = True
+                            choiseSaveMenu_active = False
 
                 if (pygame.mouse.get_pos()[0] >= saveTwo_button.x and pygame.mouse.get_pos()[0] <= saveTwo_button.x + saveTwo_button.width):
                     if (pygame.mouse.get_pos()[1] >= saveTwo_button.y and pygame.mouse.get_pos()[1] <= saveTwo_button.y + saveTwo_button.height):
-                        user = User("Saves\\save_2.xml", pet_images)
+                        user = User("Saves\\save_2.xml")
 
-                        if (user.object == None):
+                        if (user.pet_number == None):
                             choisePetMenu_active = True
                             choiseSaveMenu_active = False
                             confirm_event_number = 2
 
                         else:
+                            user.setImages(pet_images[user.pet_number], pet_images[user.pet_number + 1])
                             gameLoop(user, displayWidth, displayHeight, isFullscreen, title, myFont)
+
+                            mainMenu_active = True
+                            choiseSaveMenu_active = False
 
                 if (pygame.mouse.get_pos()[0] >= saveThree_button.x and pygame.mouse.get_pos()[0] <= saveThree_button.x + saveThree_button.width):
                     if (pygame.mouse.get_pos()[1] >= saveThree_button.y and pygame.mouse.get_pos()[1] <= saveThree_button.y + saveThree_button.height):
-                        user = User("Saves\\save_3.xml", pet_images)
+                        user = User("Saves\\save_3.xml")
 
-                        if (user.object == None):
+                        if (user.pet_number == None):
                             choisePetMenu_active = True
                             choiseSaveMenu_active = False
                             confirm_event_number = 3
 
                         else:
+                            user.setImages(pet_images[user.pet_number], pet_images[user.pet_number + 1])
                             gameLoop(user, displayWidth, displayHeight, isFullscreen, title, myFont)
+
+                            mainMenu_active = True
+                            choiseSaveMenu_active = False
 
             elif (choisePetMenu_active):
                 if (pygame.mouse.get_pos()[0] >= back_button.x and pygame.mouse.get_pos()[0] <= back_button.x + back_button.width):
                     if (pygame.mouse.get_pos()[1] >= back_button.y and pygame.mouse.get_pos()[1] <= back_button.y + back_button.height):
                         if (pet_number == 0):
-                            pet_number = pet_count - 1
+                            pet_number = pet_count - 2
                         else:
                             pet_number -= 2
 
                 if (pygame.mouse.get_pos()[0] >= next_button.x and pygame.mouse.get_pos()[0] <= next_button.x + next_button.width):
                     if (pygame.mouse.get_pos()[1] >= next_button.y and pygame.mouse.get_pos()[1] <= next_button.y + next_button.height):
-                        if (pet_number == pet_count - 1):
+                        if (pet_number == pet_count - 2):
                             pet_number = 0
                         else:
                             pet_number += 2
 
                 if (pygame.mouse.get_pos()[0] >= confirm_button.x and pygame.mouse.get_pos()[0] <= confirm_button.x + confirm_button.width):
                     if (pygame.mouse.get_pos()[1] >= confirm_button.y and pygame.mouse.get_pos()[1] <= confirm_button.y + confirm_button.height):
-                        pass
+                        user = User("Saves\\save_" + str(confirm_event_number) + ".xml")
+                        user.setPetNumber(pet_number)
+                        user.setImages(pet_images[user.pet_number], pet_images[user.pet_number + 1])
+                        gameLoop(user, displayWidth, displayHeight, isFullscreen, title, myFont)
+
+                        choisePetMenu_active = False
+                        mainMenu_active = True
 
     #Отрисовка и обновление
     background = background_image.copy()

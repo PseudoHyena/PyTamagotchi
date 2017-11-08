@@ -13,7 +13,7 @@ class User:
     def __checkAttr(self, name):
         if (self._xRoot.find("Time") == None):
             time_elem = ET.SubElement(self._xRoot, "Time")
-            time_elem.text = "0"
+            time_elem.text = "360"
             self._xTree.write(name)
 
         if (self._xRoot.find("Pet") == None):
@@ -31,16 +31,29 @@ class User:
             moodLevel_elem.text = "50"
             self._xTree.write(name)
 
-    def __init__(self, name, images):
+    def __init__(self, name):
         self.__initFile(name)
         self._saveXml_file = os.path.join(name)
         self._xTree = ET.parse(self._saveXml_file)
         self._xRoot = self._xTree.getroot()
         self.__checkAttr(name)
         self._name = name
-        self._object = None if self._xRoot.find("Pet").attrib["object"] == "None" else \
-            (images[int(self._xRoot.find("Pet").attrib["object"])],
-             images[int(self._xRoot.find("Pet").attrib["object"]) + 1], )
+        self._petNumber = None if self._xRoot.find("Pet").attrib["object"] == "None" else \
+            int(self._xRoot.find("Pet").attrib["object"])
+        self._images = []
+
+    def setImages(self, img1, img2):
+        if (len(self._images) != 0):
+            self._images.clear()
+
+        self._images.append(img1)
+        self._images.append(img2)
+
+    def setPetNumber(self, num):
+        self._petNumber = num
+
+        self._xRoot.find("Pet").attrib["object"] = str(num)
+        self._xTree.write(self._name)
 
     @property
     def tree(self):
@@ -82,10 +95,10 @@ class User:
         self._xTree.write(self._name)
 
     @property
-    def object(self):
-        return self._object
+    def pet_number(self):
+        return self._petNumber
 
-    @object.setter
-    def object(self, images):
-        self._object = images
+    @property
+    def images(self):
+        return self._images
         
