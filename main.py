@@ -113,11 +113,14 @@ logoHeight = logo.get_height()
 #Кнопки
 button_image = pygame.image.load_extended("Sprites\\Button.png").convert_alpha()
 miniButton_image = pygame.image.load_extended("Sprites\\MiniButton.png").convert_alpha()
+save_button_image = pygame.transform.scale(button_image.copy(), (button_image.get_width() - 50, button_image.get_height()))
+del_button_image = pygame.transform.scale(button_image.copy(), (40, button_image.get_height()))
 
 mainMenu_active = True
 resolutionSettings_active = False
 choiseSaveMenu_active = False
 choisePetMenu_active = False
+yesNoMenu_active = False
 
 #Settings кнопка
 
@@ -151,6 +154,12 @@ saveTwo_button = Button(button_image.copy(), "Save 2", myFont)
 
 saveThree_button = Button(button_image.copy(), "Save 3", myFont)
 
+del_saveOne_button = Button(del_button_image.copy(), "X", myFont)
+
+del_saveTwo_button = Button(del_button_image.copy(), "X", myFont)
+
+del_saveThree_button = Button(del_button_image.copy(), "X", myFont)
+
 #####
 
 back_button = Button(miniButton_image.copy(), "Back", myFont)
@@ -158,6 +167,15 @@ back_button = Button(miniButton_image.copy(), "Back", myFont)
 next_button = Button(miniButton_image.copy(), "Next", myFont)
 
 confirm_button = Button(button_image.copy(), "Confirm", myFont)
+
+#####
+
+yes_button = Button(miniButton_image.copy(), "Yes", myFont)
+no_button = Button(miniButton_image.copy(), "No", myFont)
+delSave_number = -1
+
+#####
+
 confirm_event_number = -1
 
 #######################################
@@ -184,14 +202,29 @@ def locateButtons():
     resFullScreen_button.x = (displayWidth - resFullScreen_button.width) // 2
     resFullScreen_button.y = (displayHeight - resFullScreen_button.height) // 2 + 180
 
-    saveOne_button.x = (displayWidth - saveOne_button.width) // 2
+    saveOne_button.x = (displayWidth - saveOne_button.width) // 2 - 20
     saveOne_button.y = (displayHeight - saveOne_button.height) // 2
 
-    saveTwo_button.x = (displayWidth - saveTwo_button.width) // 2
+    saveTwo_button.x = (displayWidth - saveTwo_button.width) // 2 - 20
     saveTwo_button.y = (displayHeight - saveTwo_button.height) // 2 + 60
 
-    saveThree_button.x = (displayWidth - saveThree_button.width) // 2
+    saveThree_button.x = (displayWidth - saveThree_button.width) // 2 - 20
     saveThree_button.y = (displayHeight - saveThree_button.height) // 2 + 120
+
+    del_saveOne_button.x = saveOne_button.x + saveOne_button.width + 10
+    del_saveOne_button.y = (displayHeight - saveOne_button.height) // 2
+
+    del_saveTwo_button.x = saveTwo_button.x + saveTwo_button.width + 10
+    del_saveTwo_button.y = (displayHeight - saveTwo_button.height) // 2 + 60
+
+    del_saveThree_button.x = saveThree_button.x + saveThree_button.width + 10
+    del_saveThree_button.y = (displayHeight - saveThree_button.height) // 2 + 120
+
+    no_button.x = (displayWidth - button_image.get_width()) // 2
+    no_button.y = (displayHeight - yes_button.height) // 2
+
+    yes_button.x =  no_button.x + no_button.width + 40
+    yes_button.y = (displayHeight - no_button.height) // 2
 
     back_button.x = (displayWidth - button_image.get_width()) // 2
     back_button.y = (displayHeight - back_button.height) // 2 + displayHeight // 4
@@ -403,6 +436,7 @@ while True:
                             mainMenu_active = True
                             choiseSaveMenu_active = False
 
+
                 if (pygame.mouse.get_pos()[0] >= saveThree_button.x and pygame.mouse.get_pos()[0] <= saveThree_button.x + saveThree_button.width):
                     if (pygame.mouse.get_pos()[1] >= saveThree_button.y and pygame.mouse.get_pos()[1] <= saveThree_button.y + saveThree_button.height):
                         user = User("Saves\\save_3.xml")
@@ -418,6 +452,24 @@ while True:
 
                             mainMenu_active = True
                             choiseSaveMenu_active = False
+
+                if (pygame.mouse.get_pos()[0] >= del_saveOne_button.x and pygame.mouse.get_pos()[0] <= del_saveOne_button.x + del_saveOne_button.width):
+                    if (pygame.mouse.get_pos()[1] >= del_saveOne_button.y and pygame.mouse.get_pos()[1] <= del_saveOne_button.y + del_saveOne_button.height):
+                        delSave_number = 1
+                        choiseSaveMenu_active = False
+                        yesNoMenu_active = True
+
+                if (pygame.mouse.get_pos()[0] >= del_saveTwo_button.x and pygame.mouse.get_pos()[0] <= del_saveTwo_button.x + del_saveTwo_button.width):
+                    if (pygame.mouse.get_pos()[1] >= del_saveTwo_button.y and pygame.mouse.get_pos()[1] <= del_saveTwo_button.y + del_saveTwo_button.height):
+                        delSave_number = 2
+                        choiseSaveMenu_active = False
+                        yesNoMenu_active = True
+
+                if (pygame.mouse.get_pos()[0] >= del_saveThree_button.x and pygame.mouse.get_pos()[0] <= del_saveThree_button.x + del_saveThree_button.width):
+                    if (pygame.mouse.get_pos()[1] >= del_saveThree_button.y and pygame.mouse.get_pos()[1] <= del_saveThree_button.y + del_saveThree_button.height):
+                        delSave_number = 3
+                        choiseSaveMenu_active = False
+                        yesNoMenu_active = True
 
             elif (choisePetMenu_active):
                 if (pygame.mouse.get_pos()[0] >= back_button.x and pygame.mouse.get_pos()[0] <= back_button.x + back_button.width):
@@ -443,6 +495,20 @@ while True:
 
                         choisePetMenu_active = False
                         mainMenu_active = True
+
+            elif (yesNoMenu_active):
+                if (pygame.mouse.get_pos()[0] >= no_button.x and pygame.mouse.get_pos()[0] <= no_button.x + no_button.width):
+                    if (pygame.mouse.get_pos()[1] >= no_button.y and pygame.mouse.get_pos()[1] <= no_button.y + no_button.height):
+                        yesNoMenu_active = False
+                        choiseSaveMenu_active = True
+
+                if (pygame.mouse.get_pos()[0] >= yes_button.x and pygame.mouse.get_pos()[0] <= yes_button.x + yes_button.width):
+                    if (pygame.mouse.get_pos()[1] >= yes_button.y and pygame.mouse.get_pos()[1] <= yes_button.y + yes_button.height):
+                        if (os.path.exists("Saves\\save_" + str(delSave_number) + ".xml")):
+                            os.remove("Saves\\save_" + str(delSave_number) + ".xml")
+
+                        yesNoMenu_active = False
+                        choiseSaveMenu_active = True
 
     #Отрисовка и обновление
     background = background_image.copy()
@@ -481,6 +547,15 @@ while True:
         background.blit(saveThree_button.object, (saveThree_button.x, saveThree_button.y))
         saveThree_button.object.blit(saveThree_button.text, (saveThree_button.textX, saveThree_button.textY))
 
+        background.blit(del_saveOne_button.object, (del_saveOne_button.x, del_saveOne_button.y))
+        del_saveOne_button.object.blit(del_saveOne_button.text, (del_saveOne_button.textX, del_saveOne_button.textY))
+
+        background.blit(del_saveTwo_button.object, (del_saveTwo_button.x, del_saveTwo_button.y))
+        del_saveTwo_button.object.blit(del_saveTwo_button.text, (del_saveTwo_button.textX, del_saveTwo_button.textY))
+
+        background.blit(del_saveThree_button.object, (del_saveThree_button.x, del_saveThree_button.y))
+        del_saveThree_button.object.blit(del_saveThree_button.text, (del_saveThree_button.textX, del_saveThree_button.textY))
+
     elif (choisePetMenu_active):
         background.blit(back_button.object, (back_button.x, back_button.y))
         back_button.object.blit(back_button.text, (back_button.textX, back_button.textY))
@@ -494,6 +569,13 @@ while True:
         background.blit(pet_images[pet_number].copy(),
                         ((displayWidth - pet_images[0].get_width()) // 2,
                          (displayHeight - pet_images[0].get_height()) // 2 + displayHeight // 20))
+
+    elif (yesNoMenu_active):
+        background.blit(no_button.object, (no_button.x, no_button.y))
+        no_button.object.blit(no_button.text, (no_button.textX, no_button.textY))
+
+        background.blit(yes_button.object, (yes_button.x, yes_button.y))
+        yes_button.object.blit(yes_button.text, (yes_button.textX, yes_button.textY))
 
     display.blit(background, (0, 0))
     pygame.display.update()
