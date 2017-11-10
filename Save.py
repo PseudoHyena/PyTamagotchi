@@ -16,6 +16,11 @@ class User:
             time_elem.text = "360"
             self._xTree.write(name)
 
+        if (self._xRoot.find("Day") == None):
+            day_elem = ET.SubElement(self._xRoot, "Day")
+            day_elem.text = "0"
+            self._xTree.write(name)
+
         if (self._xRoot.find("Pet") == None):
             pet_elem = ET.SubElement(self._xRoot, "Pet")
             pet_elem.set("object", "None")
@@ -24,6 +29,11 @@ class User:
         if (self._xTree.find("Pet").find("HungerLevel") == None):
             hungerLevel_elem = ET.SubElement(self._xRoot.find("Pet"), "HungerLevel")
             hungerLevel_elem.text = "0"
+            self._xTree.write(name)
+
+        if (self._xTree.find("Pet").find("HungerDeathTik") == None):
+            hungerDeathTik_elem = ET.SubElement(self._xRoot.find("Pet"), "HungerDeathTik")
+            hungerDeathTik_elem.text = "0"
             self._xTree.write(name)
 
         if (self._xTree.find("Pet").find("MoodLevel") == None):
@@ -77,6 +87,15 @@ class User:
         self._xTree.write(self._name)
 
     @property
+    def hungerDeathTik(self):
+        return int(self._xTree.find("Pet").find("HungerDeathTik").text)
+
+    @hungerDeathTik.setter
+    def hungerDeathTik(self, num):
+        self._xTree.find("Pet").find("HungerDeathTik").text = str(num)
+        self._xTree.write(self._name)
+
+    @property
     def moodLevel(self):
         return int(self._xTree.find("Pet").find("MoodLevel").text)
 
@@ -92,6 +111,15 @@ class User:
     @time.setter
     def time(self, curTime):
         self._xRoot.find("Time").text = str(curTime)
+        self._xTree.write(self._name)
+
+    @property
+    def day(self):
+        return int(self._xRoot.find("Day").text)
+
+    @day.setter
+    def day(self, day):
+        self._xRoot.find("Day").text = str(day)
         self._xTree.write(self._name)
 
     @property

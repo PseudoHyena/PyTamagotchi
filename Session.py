@@ -71,6 +71,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
     pet.hungerLevel = user.hungerLevel
     pet.moodLevel = user.moodLevel
     currentTime = user.time
+    currentDay = user.day
 
     #########################################
 
@@ -88,12 +89,32 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
     hour = currentTime // 60
     min = currentTime - hour * 60
 
+    #####
+
+    hunger_stage = pet.hungerLevel // 10 - 4 if (pet.hungerLevel // 10 - 4) > 0 else 0
+    tikToDeath_number = 1080 - (hunger_stage - 1) * 180
+    tikToDeath_currentNumber = user.hungerDeathTik
+
+    #####
+
     ##########################################
 
     #Инициализация стат. баров
     timer = font.render((("0" if hour // 10 == 0 else "") + str(hour) + ":" + ("0" if min // 10 == 0 else "") + str(min)), False, (0, 0, 0)).convert()
+    day_timer = font.render("Day: " + (str(currentDay)), False, (0, 0, 0)).convert()
     hungerLevel = font.render(("Hunger: " + str(pet.hungerLevel) + "%"), False, (0, 0, 0)).convert()
     moodLevel = font.render(("Mood: " + str(pet.moodLevel) + "%"), False, (0, 0, 0)).convert()
+
+    ##########################################
+
+    def save():
+        user.moodLevel = pet.moodLevel
+        user.hungerLevel = pet.hungerLevel
+        user.time = currentTime
+        user.day = currentDay
+        user.hungerDeathTik = tikToDeath_currentNumber
+
+    ##########################################
 
     #Игровой цикл
     while True:
@@ -101,24 +122,19 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
         for e in pygame.event.get():
             #Обработка события выхода и синхронизация
             if (e.type == pygame.QUIT):
-                user.moodLevel = pet.moodLevel
-                user.hungerLevel = pet.hungerLevel
-                user.time = currentTime
+                save()
                 exit()
 
             if (e.type == pygame.KEYDOWN):
                 if (e.key == pygame.K_ESCAPE):
-                    user.moodLevel = pet.moodLevel
-                    user.hungerLevel = pet.hungerLevel
-                    user.time = currentTime
+                    save()
                     return
 
-            #Обработка события кормежки
+            #Обработка события кормежки и настроения
             if (e.type == pygame.MOUSEBUTTONDOWN):
                 if (pygame.mouse.get_pos()[0] >= pet.x and pygame.mouse.get_pos()[0] <= pet.x + pet.width):
                     if (pygame.mouse.get_pos()[1] >= pet.y and pygame.mouse.get_pos()[1] <= pet.y + pet.height):
                         pet.moodLevel += 1
-                        display.blit(hungerLevel, (10, 40))
                         pygame.display.update()
 
                 if (isChickenLeg_food_target_active == False):
@@ -130,7 +146,6 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                     if (pygame.mouse.get_pos()[0] >= pet.x and pygame.mouse.get_pos()[0] <= pet.x + pet.width):
                         if (pygame.mouse.get_pos()[1] >= pet.y and pygame.mouse.get_pos()[1] <= pet.y + pet.height):
                             pet.hungerLevel -= chickenLeg_food.saturation
-                            display.blit(hungerLevel, (10, 40))
                             pygame.display.update()
 
                     isChickenLeg_food_target_active = False
@@ -174,8 +189,9 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                                                             pygame.mouse.get_pos()[1] - chickenLeg_food_target.height // 2))
 
         background.blit(timer, (10, 10))
-        background.blit(hungerLevel, (10, 40))
-        background.blit(moodLevel, (10, 70))
+        background.blit(day_timer, (10, 40))
+        background.blit(hungerLevel, (10, 70))
+        background.blit(moodLevel, (10, 100))
 
         display.blit(background, (0, 0))
         pygame.display.update()
@@ -208,12 +224,34 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
         if (time.time() - time_timer >= oneGameTimeUnitPerRealTimeUnit):
             currentTime = (currentTime + 1) % 1440
 
+            if (hour >= 6 or hour < 22):
+                if (hunger_stage > 0):
+                    tikToDeath_currentNumber += 1
+
+            if (currentTime == 360):
+                currentDay += 1
+                day_timer = font.render(("Day: " + str(currentDay)), False, (0, 0, 0)).convert()
+
             hour = (currentTime // 60) % 24
             min = currentTime - hour * 60
             timer = font.render((("0" if hour // 10 == 0 else "") + str(hour) + ":" + ("0" if min // 10 == 0 else "") + str(min)), False, (0, 0, 0)).convert()
             time_timer = time.time()
 
-        if (time.time() - time_autoSave >= timeTo_autoSave):
-            user.moodLevel = pet.moodLevel
-            user.hungerLevel = pet.hungerLevel
-            user.time = currentTime
+        #########################################
+
+        hunger_stage = (pet.hungerLevel // 10 - 4) if (pet.hungerLevel // 10 - 4) > 0 else 0
+        tikToDeath_number = (1080 - (hunger_stage - 1) * 180) if (hunger_stage - 1) >= 0 else 0
+        if (hunger_stage == 0):
+            tikToDeath_currentNumber = 0
+
+        #print((str(pet.hungerLevel) + " " + str(tikToDeath_currentNumber) + " of " + str(tikToDeath_number)))
+
+        if (hunger_stage >= 1 and tikToDeath_currentNumber >= tikToDeath_number):
+            print("Pet is dead")
+            return
+
+        #########################################
+
+        """if (time.time() - time_autoSave >= timeTo_autoSave):
+            save()
+            """
