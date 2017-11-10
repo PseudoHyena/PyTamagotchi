@@ -160,7 +160,7 @@ class User:
             self._xRoot.find("Poops").remove(elem)
 
         self._xTree.write(self._name)
-        
+
         for poop in heap:
             poop_elem = ET.SubElement(self._xTree.find("Poops"), "poop")
             poop_elem.set("num", str(poop.number))
