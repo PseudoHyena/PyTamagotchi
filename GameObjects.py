@@ -39,3 +39,20 @@ class Food(GameObject):
     @saturation.setter
     def saturation(self, level):
         self._saturation = level
+
+class Poop(GameObject):
+    def __init__(self, num):
+        GameObject.__init__(self)
+        self._object = None
+        self.x = 0
+        self.y = 0
+        self._number = num
+
+    def setImage(self, image):
+        self._object = image
+        self._width = image.get_width()
+        self._height = image.get_height()
+
+    @property
+    def number(self):
+        return self._number

@@ -1,9 +1,11 @@
 import pygame
 import time
+import random
 from Window import Window
 from Colors import Color
 from Pets import Pet
 from GameObjects import Food
+from GameObjects import Poop
 from Button import Button
 
 def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
@@ -24,6 +26,38 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
     chickenLeg_food_target = Food(food_images[0])
     chickenLeg_food_target.saturation = 10
     isChickenLeg_food_target_active = False
+
+    ########################################
+
+    #Загрузка спрайтов poop
+
+    poop_images = []
+
+    poopSizeX = int(displayWidth // 14.233333333)
+    poopSizeY = int(displayHeight // 8.571428571)
+
+    poop_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Poops\\Poop1.png").convert_alpha(),
+                                              (poopSizeX, poopSizeY)))
+    poop_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Poops\\Poop2.png").convert_alpha(),
+                                              (poopSizeX, poopSizeY)))
+    poop_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Poops\\Poop3.png").convert_alpha(),
+                                              (poopSizeX, poopSizeY)))
+    poop_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Poops\\Poop4.png").convert_alpha(),
+                                              (poopSizeX, poopSizeY)))
+    poop_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Poops\\Poop5.png").convert_alpha(),
+                                              (poopSizeX, poopSizeY)))
+
+    timeToPoop_heap = []
+    if (user.poopHeap != None):
+        for i in user.poopHeap.split():
+            timeToPoop_heap.append(int(i))
+
+    poops_heap = []
+    poops_heap.extend(user.getPoopsObjects())
+    for poop in poops_heap:
+        poop.setImage(poop_images[poop.number])
+
+    timeTo_Poop = 180
 
     ########################################
 
@@ -113,6 +147,12 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
         user.time = currentTime
         user.day = currentDay
         user.hungerDeathTik = tikToDeath_currentNumber
+        _timeToPoop_heap = ""
+        if (len(timeToPoop_heap) != 0):
+            for poop in timeToPoop_heap:
+                _timeToPoop_heap += (str(poop) + " ")
+        user.poopHeap = _timeToPoop_heap
+        user.setPoopsObject(poops_heap)
 
     ##########################################
 
@@ -130,12 +170,11 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                     save()
                     return
 
-            #Обработка события кормежки и настроения
+            #Обработка событий по нажатию ЛКМ
             if (e.type == pygame.MOUSEBUTTONDOWN):
                 if (pygame.mouse.get_pos()[0] >= pet.x and pygame.mouse.get_pos()[0] <= pet.x + pet.width):
                     if (pygame.mouse.get_pos()[1] >= pet.y and pygame.mouse.get_pos()[1] <= pet.y + pet.height):
                         pet.moodLevel += 1
-                        pygame.display.update()
 
                 if (isChickenLeg_food_target_active == False):
                     if (pygame.mouse.get_pos()[0] >= chickenLeg_food.x and pygame.mouse.get_pos()[0] <= chickenLeg_food.x + chickenLeg_food.width):
@@ -146,9 +185,15 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                     if (pygame.mouse.get_pos()[0] >= pet.x and pygame.mouse.get_pos()[0] <= pet.x + pet.width):
                         if (pygame.mouse.get_pos()[1] >= pet.y and pygame.mouse.get_pos()[1] <= pet.y + pet.height):
                             pet.hungerLevel -= chickenLeg_food.saturation
-                            pygame.display.update()
+                            timeToPoop_heap.append((currentTime + timeTo_Poop) % 1440)
+                            isChickenLeg_food_target_active = False
 
-                    isChickenLeg_food_target_active = False
+                if (len(poops_heap) != 0):
+                    for poop in poops_heap:
+                        if (pygame.mouse.get_pos()[0] >= poop.x and pygame.mouse.get_pos()[0] <= poop.x + poop.width):
+                            if (pygame.mouse.get_pos()[1] >= poop.y and pygame.mouse.get_pos()[1] <= poop.y + poop.height):
+                                poops_heap.remove(poop)
+
 
         #Отрисовка и обновление
 
@@ -187,6 +232,10 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
         if (isChickenLeg_food_target_active):
             background.blit(chickenLeg_food_target.object, (pygame.mouse.get_pos()[0] - chickenLeg_food_target.width // 2,
                                                             pygame.mouse.get_pos()[1] - chickenLeg_food_target.height // 2))
+
+        if (len(poops_heap) != 0):
+            for poop in poops_heap:
+                background.blit(poop.object, (poop.x, poop.y))
 
         background.blit(timer, (10, 10))
         background.blit(day_timer, (10, 40))
@@ -236,6 +285,21 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
             min = currentTime - hour * 60
             timer = font.render((("0" if hour // 10 == 0 else "") + str(hour) + ":" + ("0" if min // 10 == 0 else "") + str(min)), False, (0, 0, 0)).convert()
             time_timer = time.time()
+
+        #########################################
+
+        if (len(timeToPoop_heap) != 0 and currentTime >= timeToPoop_heap[0]):
+            poopX = random.randrange(10, displayWidth - poopSizeX - 10)
+            poopY = random.randrange(displayHeight - int(displayHeight // 6.857142857), displayHeight - poopSizeY - 5)
+
+            poop_number = random.randrange(0, len(poop_images))
+            poop = Poop(poop_number)
+            poop.setImage(poop_images[poop_number])
+            poop.x = poopX
+            poop.y = poopY
+            poops_heap.append(poop)
+
+            timeToPoop_heap.pop(0)
 
         #########################################
 
