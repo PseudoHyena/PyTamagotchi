@@ -91,6 +91,36 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
 
     ########################################
 
+    #Board
+
+    board_image = pygame.image.load_extended("Sprites\\Board.png").convert()
+    boardSizeX = board_image.get_width()
+    boardSizeY = board_image.get_height()
+
+    work_triggerX1 = (displayWidth - boardSizeX) + 90
+    work_triggerY1 = 38
+    work_triggerX2 = (displayWidth - boardSizeX) + 135
+    work_triggerY2 = 85
+
+    shop_triggerX1 = (displayWidth - boardSizeX) + 35
+    shop_triggerY1 = 82
+    shop_triggerX2 = (displayWidth - boardSizeX) + 85
+    shop_triggerY2 = 123
+
+    stock_triggerX1 = (displayWidth - boardSizeX) + 110
+    stock_triggerY1 = 131
+    stock_triggerX2 = (displayWidth - boardSizeX) + 181
+    stock_triggerY2 = 182
+
+    menu_triggerX1 = (displayWidth - boardSizeX) + 40
+    menu_triggerY1 = 215
+    menu_triggerX2 = (displayWidth - boardSizeX) + 83
+    menu_triggerY2 = 270
+
+    isBoardActive = False
+
+    ########################################
+
     #Инициализация окна
     window = Window(displayWidth, displayHeight, Color().black)
     display = window.newWindow(title, pygame.FULLSCREEN if isFullscreen else 0)
@@ -171,21 +201,27 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                     return
 
             #Обработка событий по нажатию ЛКМ
-            if (e.type == pygame.MOUSEBUTTONDOWN):
+            if (e.type == pygame.MOUSEBUTTONDOWN and e.button == 1):
                 if (pygame.mouse.get_pos()[0] >= pet.x and pygame.mouse.get_pos()[0] <= pet.x + pet.width):
                     if (pygame.mouse.get_pos()[1] >= pet.y and pygame.mouse.get_pos()[1] <= pet.y + pet.height):
                         pet.moodLevel += 1
 
-                if (isChickenLeg_food_target_active == False):
-                    if (pygame.mouse.get_pos()[0] >= chickenLeg_food.x and pygame.mouse.get_pos()[0] <= chickenLeg_food.x + chickenLeg_food.width):
-                        if (pygame.mouse.get_pos()[1] >= chickenLeg_food.y and pygame.mouse.get_pos()[1] <= chickenLeg_food.y + chickenLeg_food.height):
-                            isChickenLeg_food_target_active = True
+                if (isBoardActive == False):
+                    if (isChickenLeg_food_target_active == False):
+                        if (pygame.mouse.get_pos()[0] >= chickenLeg_food.x and pygame.mouse.get_pos()[0] <= chickenLeg_food.x + chickenLeg_food.width):
+                            if (pygame.mouse.get_pos()[1] >= chickenLeg_food.y and pygame.mouse.get_pos()[1] <= chickenLeg_food.y + chickenLeg_food.height):
+                                isChickenLeg_food_target_active = True
 
-                else:
-                    if (pygame.mouse.get_pos()[0] >= pet.x and pygame.mouse.get_pos()[0] <= pet.x + pet.width):
-                        if (pygame.mouse.get_pos()[1] >= pet.y and pygame.mouse.get_pos()[1] <= pet.y + pet.height):
-                            pet.hungerLevel -= chickenLeg_food.saturation
-                            timeToPoop_heap.append((currentTime + timeTo_Poop) % 1440)
+                    else:
+                        if (pygame.mouse.get_pos()[0] >= pet.x and pygame.mouse.get_pos()[0] <= pet.x + pet.width):
+                            if (pygame.mouse.get_pos()[1] >= pet.y and pygame.mouse.get_pos()[1] <= pet.y + pet.height):
+                                pet.hungerLevel -= chickenLeg_food.saturation
+                                timeToPoop_heap.append((currentTime + timeTo_Poop) % 1440)
+                                isChickenLeg_food_target_active = False
+
+                            else:
+                                isChickenLeg_food_target_active = False
+                        else:
                             isChickenLeg_food_target_active = False
 
                 if (len(poops_heap) != 0):
@@ -194,6 +230,29 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                             if (pygame.mouse.get_pos()[1] >= poop.y and pygame.mouse.get_pos()[1] <= poop.y + poop.height):
                                 poops_heap.remove(poop)
 
+                if (isBoardActive):
+                    if (pygame.mouse.get_pos()[0] >= work_triggerX1 and pygame.mouse.get_pos()[0] <= work_triggerX2):
+                        if (pygame.mouse.get_pos()[1] >= work_triggerY1 and pygame.mouse.get_pos()[1] <= work_triggerY2):
+                            print("Work")
+
+                    if (pygame.mouse.get_pos()[0] >= shop_triggerX1 and pygame.mouse.get_pos()[0] <= shop_triggerX2):
+                        if (pygame.mouse.get_pos()[1] >= shop_triggerY1 and pygame.mouse.get_pos()[1] <= shop_triggerY2):
+                            print("Shop")
+
+                    if (pygame.mouse.get_pos()[0] >= stock_triggerX1 and pygame.mouse.get_pos()[0] <= stock_triggerX2):
+                        if (pygame.mouse.get_pos()[1] >= stock_triggerY1 and pygame.mouse.get_pos()[1] <= stock_triggerY2):
+                            print("Stock")
+
+                    if (pygame.mouse.get_pos()[0] >= menu_triggerX1 and pygame.mouse.get_pos()[0] <= menu_triggerX2):
+                        if (pygame.mouse.get_pos()[1] >= menu_triggerY1 and pygame.mouse.get_pos()[1] <= menu_triggerY2):
+                            print("Menu")
+
+            if (e.type == pygame.KEYDOWN):
+                if (e.key == pygame.K_j):
+                    if (isBoardActive == True):
+                        isBoardActive = False
+                    else:
+                        isBoardActive = True
 
         #Отрисовка и обновление
 
@@ -237,6 +296,9 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
             for poop in poops_heap:
                 background.blit(poop.object, (poop.x, poop.y))
 
+        if (isBoardActive):
+            background.blit(board_image.copy(), (displayWidth - boardSizeX, 0))
+
         background.blit(timer, (10, 10))
         background.blit(day_timer, (10, 40))
         background.blit(hungerLevel, (10, 70))
@@ -273,9 +335,11 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
         if (time.time() - time_timer >= oneGameTimeUnitPerRealTimeUnit):
             currentTime = (currentTime + 1) % 1440
 
-            if (hour >= 6 or hour < 22):
+            if (hour >= 6 and hour < 22):
                 if (hunger_stage > 0):
                     tikToDeath_currentNumber += 1
+                else:
+                    tikToDeath_currentNumber = 0
 
             if (currentTime == 360):
                 currentDay += 1
@@ -308,7 +372,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
         if (hunger_stage == 0):
             tikToDeath_currentNumber = 0
 
-        #print((str(pet.hungerLevel) + " " + str(tikToDeath_currentNumber) + " of " + str(tikToDeath_number)))
+        print((str(pet.hungerLevel) + " " + str(tikToDeath_currentNumber) + " of " + str(tikToDeath_number)))
 
         if (hunger_stage >= 1 and tikToDeath_currentNumber >= tikToDeath_number):
             print("Pet is dead")
