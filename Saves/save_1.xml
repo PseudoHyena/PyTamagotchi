@@ -1,1 +1,1 @@
-<Session><Time>284</Time><Day>0</Day><Poops /><Pet object="4"><HungerLevel>93</HungerLevel><HungerDeathTik>0</HungerDeathTik><MoodLevel>0</MoodLevel><PoopHeap /></Pet></Session>
+<Session><Time>561</Time><Day>1</Day><Poops><poop num="4" x="701" y="415" /><poop num="0" x="650" y="412" /><poop num="0" x="270" y="414" /><poop num="3" x="52" y="414" /></Poops><Pet object="6"><HungerLevel>20</HungerLevel><HungerDeathTik>0</HungerDeathTik><MoodLevel>0</MoodLevel><PoopHeap /></Pet><Coin>50</Coin></Session>

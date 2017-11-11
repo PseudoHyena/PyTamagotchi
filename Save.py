@@ -22,6 +22,11 @@ class User:
             day_elem.text = "0"
             self._xTree.write(name)
 
+        if (self._xRoot.find("Coin") == None):
+            coin_elem = ET.SubElement(self._xRoot, "Coin")
+            coin_elem.text = "50"
+            self._xTree.write(name)
+
         if (self._xRoot.find("Poops") == None):
             day_elem = ET.SubElement(self._xRoot, "Poops")
             self._xTree.write(name)
@@ -86,6 +91,15 @@ class User:
     @property
     def file(self):
         return self._saveXml_file
+
+    @property
+    def coin(self):
+        return int(self._xTree.find("Coin").text)
+
+    @coin.setter
+    def coin(self, value):
+        self._xTree.find("Coin").text = str(value)
+        self._xTree.write(self._name)
 
     @property
     def hungerLevel(self):

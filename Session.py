@@ -88,6 +88,24 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                                (displayWidth, displayHeight)))
     background = None
     background_stage = 0
+    isMain_active = True
+
+    work_background_image = pygame.transform.scale(pygame.image.load_extended("Sprites\\Backgrounds\\WorkBG.png").convert(),
+                                (displayWidth, displayHeight))
+
+    ########################################
+
+    #coin
+
+    coinSizeX = int(displayWidth // 17.42857143)
+    coinSizeY = int(displayHeight // 10)
+
+    coin_image = pygame.transform.scale(pygame.image.load_extended("Sprites\\Coin.png").convert_alpha(), (coinSizeX, coinSizeY))
+
+    coin_triggerX, coin_triggerY = (random.randrange(5, displayWidth - coinSizeX - 5),
+                                            random.randrange(5, displayHeight - coinSizeY - 5))
+
+    isCoin_active = False
 
     ########################################
 
@@ -117,7 +135,8 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
     menu_triggerX2 = (displayWidth - boardSizeX) + 83
     menu_triggerY2 = 270
 
-    isBoardActive = False
+    isBoard_active = False
+    isWork_active = False
 
     ########################################
 
@@ -136,6 +155,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
     pet.moodLevel = user.moodLevel
     currentTime = user.time
     currentDay = user.day
+    coin_sum = user.coin if user.coin != None else 0
 
     #########################################
 
@@ -144,11 +164,16 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
     timeTo_hunger = 1.8
     timeTo_mood = 1.5
     timeTo_autoSave = 60
+    timeOf_coin = 0.5
 
     time_timer = time.time()
     time_hunger = time.time()
     time_mood = time.time()
     time_autoSave = time.time()
+    time_coin = time.time()
+
+    wait_time = random.randrange(0, 3)
+    wait_currentTime = time.time()
 
     hour = currentTime // 60
     min = currentTime - hour * 60
@@ -183,6 +208,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                 _timeToPoop_heap += (str(poop) + " ")
         user.poopHeap = _timeToPoop_heap
         user.setPoopsObject(poops_heap)
+        user.coin = coin_sum
 
     ##########################################
 
@@ -196,17 +222,23 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                 exit()
 
             if (e.type == pygame.KEYDOWN):
+                if (e.key == pygame.K_b):
+                    if (isBoard_active == True):
+                        isBoard_active = False
+                    else:
+                        isBoard_active = True
+
                 if (e.key == pygame.K_ESCAPE):
-                    save()
-                    return
+                    isMain_active = True
+                    isWork_active = False
 
             #Обработка событий по нажатию ЛКМ
             if (e.type == pygame.MOUSEBUTTONDOWN and e.button == 1):
-                if (pygame.mouse.get_pos()[0] >= pet.x and pygame.mouse.get_pos()[0] <= pet.x + pet.width):
-                    if (pygame.mouse.get_pos()[1] >= pet.y and pygame.mouse.get_pos()[1] <= pet.y + pet.height):
-                        pet.moodLevel += 1
+                if (isMain_active):
+                    if (pygame.mouse.get_pos()[0] >= pet.x and pygame.mouse.get_pos()[0] <= pet.x + pet.width):
+                        if (pygame.mouse.get_pos()[1] >= pet.y and pygame.mouse.get_pos()[1] <= pet.y + pet.height):
+                            pet.moodLevel += 1
 
-                if (isBoardActive == False):
                     if (isChickenLeg_food_target_active == False):
                         if (pygame.mouse.get_pos()[0] >= chickenLeg_food.x and pygame.mouse.get_pos()[0] <= chickenLeg_food.x + chickenLeg_food.width):
                             if (pygame.mouse.get_pos()[1] >= chickenLeg_food.y and pygame.mouse.get_pos()[1] <= chickenLeg_food.y + chickenLeg_food.height):
@@ -216,7 +248,8 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                         if (pygame.mouse.get_pos()[0] >= pet.x and pygame.mouse.get_pos()[0] <= pet.x + pet.width):
                             if (pygame.mouse.get_pos()[1] >= pet.y and pygame.mouse.get_pos()[1] <= pet.y + pet.height):
                                 pet.hungerLevel -= chickenLeg_food.saturation
-                                timeToPoop_heap.append((currentTime + timeTo_Poop) % 1440)
+                                poop_time = (currentTime + timeTo_Poop) % 1440
+                                timeToPoop_heap.append( poop_time if (poop_time / 360) >= 1 else (360 + random.randrange(0, 30)))
                                 isChickenLeg_food_target_active = False
 
                             else:
@@ -224,16 +257,21 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                         else:
                             isChickenLeg_food_target_active = False
 
-                if (len(poops_heap) != 0):
-                    for poop in poops_heap:
-                        if (pygame.mouse.get_pos()[0] >= poop.x and pygame.mouse.get_pos()[0] <= poop.x + poop.width):
-                            if (pygame.mouse.get_pos()[1] >= poop.y and pygame.mouse.get_pos()[1] <= poop.y + poop.height):
-                                poops_heap.remove(poop)
+                    if (len(poops_heap) != 0):
+                        for poop in poops_heap:
+                            if (pygame.mouse.get_pos()[0] >= poop.x and pygame.mouse.get_pos()[0] <= poop.x + poop.width):
+                                if (pygame.mouse.get_pos()[1] >= poop.y and pygame.mouse.get_pos()[1] <= poop.y + poop.height):
+                                    poops_heap.remove(poop)
 
-                if (isBoardActive):
+                if (isBoard_active):
                     if (pygame.mouse.get_pos()[0] >= work_triggerX1 and pygame.mouse.get_pos()[0] <= work_triggerX2):
                         if (pygame.mouse.get_pos()[1] >= work_triggerY1 and pygame.mouse.get_pos()[1] <= work_triggerY2):
-                            print("Work")
+                            isWork_active = True
+                            isMain_active = False
+                            isBoard_active = False
+
+                            wait_time = random.randrange(1, 4)
+                            wait_currentTime = time.time()
 
                     if (pygame.mouse.get_pos()[0] >= shop_triggerX1 and pygame.mouse.get_pos()[0] <= shop_triggerX2):
                         if (pygame.mouse.get_pos()[1] >= shop_triggerY1 and pygame.mouse.get_pos()[1] <= shop_triggerY2):
@@ -245,14 +283,21 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
 
                     if (pygame.mouse.get_pos()[0] >= menu_triggerX1 and pygame.mouse.get_pos()[0] <= menu_triggerX2):
                         if (pygame.mouse.get_pos()[1] >= menu_triggerY1 and pygame.mouse.get_pos()[1] <= menu_triggerY2):
-                            print("Menu")
+                            save()
+                            return
 
-            if (e.type == pygame.KEYDOWN):
-                if (e.key == pygame.K_j):
-                    if (isBoardActive == True):
-                        isBoardActive = False
-                    else:
-                        isBoardActive = True
+                if (isWork_active):
+                    if (isCoin_active):
+                        if (pygame.mouse.get_pos()[0] >= coin_triggerX and pygame.mouse.get_pos()[0] <= coin_triggerX + coinSizeX):
+                            if (pygame.mouse.get_pos()[1] >= coin_triggerY and pygame.mouse.get_pos()[1] <= coin_triggerY + coinSizeY):
+                                isCoin_active = False
+                                wait_time = random.randrange(2, 4)
+                                wait_currentTime = time.time()
+                                time_coin = 0
+
+                                coin_sum += 1
+                                print(str(coin_sum))
+
 
         #Отрисовка и обновление
 
@@ -279,30 +324,59 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
         elif (hour <= 0):
             background_stage = 10
 
-        background = background_images[background_stage].copy()
 
-        if (hour > 21 or hour <= 5):
-            background.blit(pet.object[1], (pet.x, pet.y))
-        else:
-            background.blit(pet.object[0], (pet.x, pet.y))
+        if (isMain_active):
+            background = background_images[background_stage].copy()
 
-        background.blit(chickenLeg_food.object, (chickenLeg_food.x, chickenLeg_food.y))
+            if (hour > 21 or hour <= 5):
+                background.blit(pet.object[1], (pet.x, pet.y))
+            else:
+                background.blit(pet.object[0], (pet.x, pet.y))
 
-        if (isChickenLeg_food_target_active):
-            background.blit(chickenLeg_food_target.object, (pygame.mouse.get_pos()[0] - chickenLeg_food_target.width // 2,
-                                                            pygame.mouse.get_pos()[1] - chickenLeg_food_target.height // 2))
+            background.blit(chickenLeg_food.object, (chickenLeg_food.x, chickenLeg_food.y))
 
-        if (len(poops_heap) != 0):
-            for poop in poops_heap:
-                background.blit(poop.object, (poop.x, poop.y))
+            if (isChickenLeg_food_target_active):
+                background.blit(chickenLeg_food_target.object, (pygame.mouse.get_pos()[0] - chickenLeg_food_target.width // 2,
+                                                                pygame.mouse.get_pos()[1] - chickenLeg_food_target.height // 2))
 
-        if (isBoardActive):
-            background.blit(board_image.copy(), (displayWidth - boardSizeX, 0))
+            if (len(poops_heap) != 0):
+                for poop in poops_heap:
+                    background.blit(poop.object, (poop.x, poop.y))
 
-        background.blit(timer, (10, 10))
-        background.blit(day_timer, (10, 40))
-        background.blit(hungerLevel, (10, 70))
-        background.blit(moodLevel, (10, 100))
+            if (isBoard_active):
+                background.blit(board_image.copy(), (displayWidth - boardSizeX, 0))
+
+            background.blit(timer, (10, 10))
+            background.blit(day_timer, (10, 40))
+            background.blit(hungerLevel, (10, 70))
+            background.blit(moodLevel, (10, 100))
+
+        if (isWork_active):
+            background = work_background_image.copy()
+            coin = coin_image.copy()
+            coin_sum_text = font.render(str(coin_sum), False, (0, 0, 0)).convert()
+
+            if (time.time() - wait_currentTime >= wait_time):
+                if (time_coin == 0):
+                    time_coin = time.time()
+
+                if (time.time() - time_coin <= timeOf_coin):
+                    isCoin_active = True
+                else:
+                    coin_triggerX, coin_triggerY = (random.randrange(5, displayWidth - coinSizeX - 5),
+                                           random.randrange(5, displayHeight - coinSizeY - 5))
+
+                    wait_time = random.randrange(2, 4)
+                    wait_currentTime = time.time()
+                    time_coin = 0
+                    isCoin_active = False
+
+            if (isCoin_active):
+                background.blit(coin, (coin_triggerX, coin_triggerY))
+
+            background.blit(coin, (10, 10))
+            background.blit(coin_sum_text, (15 + coinSizeX, (10 + coin_sum_text.get_height()) // 2))
+
 
         display.blit(background, (0, 0))
         pygame.display.update()
@@ -372,7 +446,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
         if (hunger_stage == 0):
             tikToDeath_currentNumber = 0
 
-        print((str(pet.hungerLevel) + " " + str(tikToDeath_currentNumber) + " of " + str(tikToDeath_number)))
+        #print((str(pet.hungerLevel) + " " + str(tikToDeath_currentNumber) + " of " + str(tikToDeath_number)))
 
         if (hunger_stage >= 1 and tikToDeath_currentNumber >= tikToDeath_number):
             print("Pet is dead")
