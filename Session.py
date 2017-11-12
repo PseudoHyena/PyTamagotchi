@@ -4,9 +4,7 @@ import random
 from Window import Window
 from Colors import Color
 from Pets import Pet
-from GameObjects import Food
 from GameObjects import Poop
-from Button import Button
 
 def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
 
@@ -40,6 +38,11 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
     food_count_list = user.getFoodCount()
     food_saturation_list = user.getFoodSaturation()
     food_price_list = user.getFoodPrice()
+
+    food_target = None
+    isFood_target_active = False
+    food_target_num = -1
+    food_target_saturation = 1
 
     ########################################
 
@@ -107,6 +110,10 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
     shop_board_image = pygame.transform.scale(pygame.image.load_extended("Sprites\\Backgrounds\\ShopB.png").convert(),
                                 (int(displayWidth * 0.25), int(displayHeight * 0.75)))
 
+    stock_board_image = pygame.transform.scale(pygame.image.load_extended("Sprites\\Backgrounds\\StockB.png").convert(),
+                                (int(displayWidth * 0.25), int(displayHeight * 0.75)))
+
+
     background = None
     background_stage = 0
     isMain_active = True
@@ -157,6 +164,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
     isBoard_active = False
     isWork_active = False
     isShop_active = False
+    isStock_active = False
 
     ########################################
 
@@ -247,37 +255,38 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                     if (isBoard_active == True):
                         isBoard_active = False
                     else:
+                        isWork_active = False
+                        isShop_active = False
+                        isStock_active = False
                         isBoard_active = True
 
                 if (e.key == pygame.K_ESCAPE):
                     isMain_active = True
                     isWork_active = False
                     isShop_active = False
+                    isStock_active = False
 
             #Обработка событий по нажатию ЛКМ
             if (e.type == pygame.MOUSEBUTTONDOWN and e.button == 1):
                 if (isMain_active):
-                    if (pygame.mouse.get_pos()[0] >= pet.x and pygame.mouse.get_pos()[0] <= pet.x + pet.width):
-                        if (pygame.mouse.get_pos()[1] >= pet.y and pygame.mouse.get_pos()[1] <= pet.y + pet.height):
-                            pet.moodLevel += 1
+                    if (isFood_target_active):
+                        if (pygame.mouse.get_pos()[0] >= pet.x and pygame.mouse.get_pos()[0] <= pet.x + pet.width):
+                            if (pygame.mouse.get_pos()[1] >= pet.y and pygame.mouse.get_pos()[1] <= pet.y + pet.height):
+                                pet.hungerLevel -= food_target_saturation
+                                food_count_list[food_target_num] -= 1
+                                poop_time = (currentTime + timeTo_Poop) % 1440
+                                timeToPoop_heap.append( poop_time if (poop_time / 360) >= 1 else (360 + random.randrange(0, 30)))
+                                isFood_target_active = False
 
-                    #if (isChickenLeg_food_target_active == False):
-                        #if (pygame.mouse.get_pos()[0] >= chickenLeg_food.x and pygame.mouse.get_pos()[0] <= chickenLeg_food.x + chickenLeg_food.width):
-                            #if (pygame.mouse.get_pos()[1] >= chickenLeg_food.y and pygame.mouse.get_pos()[1] <= chickenLeg_food.y + chickenLeg_food.height):
-                                #isChickenLeg_food_target_active = True
+                            else:
+                                isFood_target_active = False
+                        else:
+                            isFood_target_active = False
 
                     else:
                         if (pygame.mouse.get_pos()[0] >= pet.x and pygame.mouse.get_pos()[0] <= pet.x + pet.width):
                             if (pygame.mouse.get_pos()[1] >= pet.y and pygame.mouse.get_pos()[1] <= pet.y + pet.height):
-                                #pet.hungerLevel -= chickenLeg_food.saturation
-                                poop_time = (currentTime + timeTo_Poop) % 1440
-                                timeToPoop_heap.append( poop_time if (poop_time / 360) >= 1 else (360 + random.randrange(0, 30)))
-                                isChickenLeg_food_target_active = False
-
-                            else:
-                                isChickenLeg_food_target_active = False
-                        else:
-                            isChickenLeg_food_target_active = False
+                                pet.moodLevel += 1
 
                     if (len(poops_heap) != 0):
                         for poop in poops_heap:
@@ -314,6 +323,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                                 if (pygame.mouse.get_pos()[1] >= posY and pygame.mouse.get_pos()[1] <= posY + foodSizeY):
                                     if (coin_sum >= food_price_list[foodN]):
                                         coin_sum -= food_price_list[foodN]
+                                        food_count_list[foodN] += 1
 
                                     break_flag = True
                                     break
@@ -326,6 +336,37 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                         startX = -1 * int(shop_board_image.get_width() // 4)
                         startY += stepY
 
+                if (isStock_active):
+                    startX = -1 * int(stock_board_image.get_width() // 4)
+                    stepX = int(stock_board_image.get_width() // 2)
+                    startY = -1 * int(stock_board_image.get_height() // 12)
+                    stepY = int(stock_board_image.get_height() // 6)
+                    foodN = 0
+
+                    break_flag = False
+                    for i in range(5):
+                        for j in range(2):
+                            posX = (displayWidth - stock_board_image.get_width()) + startX + stepX - foodSizeX // 2 - foodSizeX // 5
+                            posY = startY + stepY
+
+                            if (pygame.mouse.get_pos()[0] >= posX and pygame.mouse.get_pos()[0] <= posX + foodSizeX):
+                                if (pygame.mouse.get_pos()[1] >= posY and pygame.mouse.get_pos()[1] <= posY + foodSizeY):
+                                    if (food_count_list[foodN] > 0):
+                                        isFood_target_active = True
+                                        food_target = food_images[foodN].copy()
+                                        food_target_num = foodN
+                                        food_target_saturation = food_saturation_list[foodN]
+                                        break_flag = True
+                                    break
+
+                            if (break_flag):
+                                break
+
+                            foodN += 1
+                            startX += stepX
+                        startX = -1 * int(stock_board_image.get_width() // 4)
+                        startY += stepY
+
                 if (isBoard_active):
                     if (pygame.mouse.get_pos()[0] >= work_triggerX1 and pygame.mouse.get_pos()[0] <= work_triggerX2):
                         if (pygame.mouse.get_pos()[1] >= work_triggerY1 and pygame.mouse.get_pos()[1] <= work_triggerY2):
@@ -333,7 +374,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                             isMain_active = False
                             isBoard_active = False
 
-                            wait_time = random.randrange(1, 4)
+                            wait_time = random.randrange(1, 3)
                             wait_currentTime = time.time()
 
                     if (pygame.mouse.get_pos()[0] >= shop_triggerX1 and pygame.mouse.get_pos()[0] <= shop_triggerX2):
@@ -343,7 +384,8 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
 
                     if (pygame.mouse.get_pos()[0] >= stock_triggerX1 and pygame.mouse.get_pos()[0] <= stock_triggerX2):
                         if (pygame.mouse.get_pos()[1] >= stock_triggerY1 and pygame.mouse.get_pos()[1] <= stock_triggerY2):
-                            print("Stock")
+                            isBoard_active = False
+                            isStock_active = True
 
                     if (pygame.mouse.get_pos()[0] >= menu_triggerX1 and pygame.mouse.get_pos()[0] <= menu_triggerX2):
                         if (pygame.mouse.get_pos()[1] >= menu_triggerY1 and pygame.mouse.get_pos()[1] <= menu_triggerY2):
@@ -386,12 +428,6 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
             else:
                 background.blit(pet.object[0], (pet.x, pet.y))
 
-            #background.blit(chickenLeg_food.object, (chickenLeg_food.x, chickenLeg_food.y))
-
-            #if (isChickenLeg_food_target_active):
-                #background.blit(chickenLeg_food_target.object, (pygame.mouse.get_pos()[0] - chickenLeg_food_target.width // 2,
-                       #                                         pygame.mouse.get_pos()[1] - chickenLeg_food_target.height // 2))
-
             if (len(poops_heap) != 0):
                 for poop in poops_heap:
                     background.blit(poop.object, (poop.x, poop.y))
@@ -419,13 +455,14 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                     coin_triggerX, coin_triggerY = (random.randrange(5, displayWidth - coinSizeX - 5),
                                            random.randrange(5, displayHeight - coinSizeY - 5))
 
-                    wait_time = random.randrange(2, 4)
+                    wait_time = random.randrange(1, 3)
                     wait_currentTime = time.time()
                     time_coin = 0
                     isCoin_active = False
 
             if (isCoin_active):
                 background.blit(coin, (coin_triggerX, coin_triggerY))
+
 
             background.blit(coin, (10, 10))
             background.blit(coin_sum_text, (15 + coinSizeX, (10 + coin_sum_text.get_height()) // 2))
@@ -455,6 +492,36 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                 startY += stepY
 
             background.blit(shopBoard, (displayWidth - shopBoard.get_width(), 0))
+
+        if (isStock_active):
+            stockBoard = stock_board_image.copy()
+
+            startX = -1 * int(stockBoard.get_width() // 4)
+            stepX = int(stockBoard.get_width() // 2)
+            startY = -1 * int(stockBoard.get_height() // 12)
+            stepY = int(stockBoard.get_height() // 6)
+            foodN = 0
+
+            for i in range(5):
+                for j in range(2):
+                    posX = startX + stepX - foodSizeX // 2 - foodSizeX // 5
+                    posY = startY + stepY
+
+                    stockBoard.blit(food_images[foodN].copy(), (posX, posY))
+
+                    price_text = font.render(str(food_count_list[foodN]), False, (0, 0, 0)).convert()
+                    stockBoard.blit(price_text, (posX + foodSizeX + 5, posY + foodSizeY - price_text.get_height()))
+
+                    foodN += 1
+                    startX += stepX
+                startX = -1 * int(stockBoard.get_width() // 4)
+                startY += stepY
+
+            background.blit(stockBoard, (displayWidth - stockBoard.get_width(), 0))
+
+        if (isFood_target_active):
+            background.blit(food_target, (pygame.mouse.get_pos()[0] - foodSizeX // 2,
+                                                            pygame.mouse.get_pos()[1] - foodSizeY // 2))
 
         display.blit(background, (0, 0))
         pygame.display.update()
