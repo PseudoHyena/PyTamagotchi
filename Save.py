@@ -31,6 +31,17 @@ class User:
             day_elem = ET.SubElement(self._xRoot, "Poops")
             self._xTree.write(name)
 
+        if (self._xRoot.find("Food") == None):
+            food_elem = ET.SubElement(self._xRoot, "Food")
+
+            for i in range(1, 11):
+                elem = ET.SubElement(self._xRoot.find("Food"), ("food" + str(i)))
+                elem.set("count", "0")
+                elem.set("saturation", str((i % 5 + 1) * 3))
+                elem.set("price", str((i % 3 + 1) * 15))
+
+            self._xTree.write(name)
+
         if (self._xRoot.find("Pet") == None):
             pet_elem = ET.SubElement(self._xRoot, "Pet")
             pet_elem.set("object", "None")
@@ -182,6 +193,35 @@ class User:
             poop_elem.set("y", str(poop.y))
 
         self._xTree.write(self._name)
+
+    def getFoodCount(self):
+        list = []
+
+        for i in range(1, 11):
+            list.append(int(self._xTree.find("Food").find(("food" + str(i))).attrib["count"]))
+
+        return list
+
+    def setFoodCount(self, list):
+        for i in range(1, 11):
+            self._xTree.find("Food").find(("food" + str(i))).attrib["count"] = str(list[i - 1])
+            self._xTree.write(self._name)
+
+    def getFoodSaturation(self):
+        list = []
+
+        for i in range(1, 11):
+            list.append(int(self._xTree.find("Food").find(("food" + str(i))).attrib["saturation"]))
+
+        return list
+
+    def getFoodPrice(self):
+        list = []
+
+        for i in range(1, 11):
+            list.append(int(self._xTree.find("Food").find(("food" + str(i))).attrib["price"]))
+
+        return list
 
     @property
     def pet_number(self):
