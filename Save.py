@@ -78,6 +78,9 @@ class User:
             int(self._xRoot.find("Pet").attrib["object"])
         self._images = []
 
+    def delSave(self):
+        os.remove(self._name)
+
     def setImages(self, img1, img2):
         if (len(self._images) != 0):
             self._images.clear()

@@ -1,6 +1,7 @@
 import pygame
 import time
 import random
+from math import ceil
 from Window import Window
 from Colors import Color
 from Pets import Pet
@@ -530,7 +531,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
 
         #Временные расчеты разностей, изменение статов
         if (time.time() - time_hunger >= timeTo_hunger):
-            pet.hungerLevel += 1
+            pet.hungerLevel += 6 - (pet.moodLevel // 10 if pet.moodLevel < 50 else 5)
 
             if (pet.hungerLevel < 0):
                 pet.hungerLevel = 0
@@ -541,7 +542,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
             time_hunger = time.time()
 
         if (time.time() - time_mood >= timeTo_mood):
-            pet.moodLevel -= 1
+            pet.moodLevel -= 1 + ceil(len(poops_heap) // 2)
 
             if (pet.moodLevel < 0):
                 pet.moodLevel = 0
@@ -594,7 +595,20 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
         #print((str(pet.hungerLevel) + " " + str(tikToDeath_currentNumber) + " of " + str(tikToDeath_number)))
 
         if (hunger_stage >= 1 and tikToDeath_currentNumber >= tikToDeath_number):
-            print("Pet is dead")
+            background = pygame.Surface((displayWidth, displayHeight))
+            background.fill(Color().black)
+
+            death_text = font.render("Pet is dead", False, (255, 255, 255)).convert()
+
+            death_timder = time.time()
+            while (time.time() - death_timder <= 4):
+                background.blit(death_text, ((displayWidth - death_text.get_width()) // 2,
+                                             (displayHeight - death_text.get_height()) // 2))
+
+                display.blit(background, (0, 0))
+                pygame.display.update()
+
+            user.delSave()
             return
 
         #########################################
