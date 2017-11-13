@@ -10,7 +10,7 @@ from Save import User
 ######################################
 
 #Игровая информация
-version = 1.0
+version = 1.01
 release = "release"
 title = "Tamagotchi PC ver %f - %s"  % (version, release)
 

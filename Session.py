@@ -35,11 +35,12 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                                               (foodSizeX, foodSizeY)))
     food_images.append(pygame.transform.scale(pygame.image.load_extended("Sprites\\Food\\Roll.png").convert_alpha(),
                                               (foodSizeX, foodSizeY)))
-
+    #Получение данных о цене и насыщении
     food_count_list = user.getFoodCount()
     food_saturation_list = user.getFoodSaturation()
     food_price_list = user.getFoodPrice()
 
+    #Таргет еда
     food_target = None
     isFood_target_active = False
     food_target_num = -1
@@ -119,10 +120,9 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
     background_stage = 0
     isMain_active = True
 
-
     ########################################
 
-    #coin
+    #Загрузка спрайта монеты и установка изначальной пози2ии монеты-триггера
 
     coinSizeX = int(displayWidth // 17.42857143)
     coinSizeY = int(displayHeight // 10)
@@ -136,7 +136,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
 
     ########################################
 
-    #Board
+    #Загрузка и установка доски-меню
 
     board_image = pygame.image.load_extended("Sprites\\Board.png").convert()
     boardSizeX = board_image.get_width()
@@ -186,12 +186,14 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
     currentDay = user.day
     coin_sum = user.coin if user.coin != None else 0
 
+    mood_posX = 0
+    mood_posY = 0
     #########################################
 
     #Временные константы и дельты
     oneGameTimeUnitPerRealTimeUnit = 0.5
-    timeTo_hunger = 1.8
-    timeTo_mood = 1.5
+    timeTo_hunger = 2.4
+    timeTo_mood = 2
     timeTo_autoSave = 60
     timeOf_coin = 0.5
 
@@ -209,6 +211,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
 
     #####
 
+    #Загрузка тиков смерти
     hunger_stage = pet.hungerLevel // 10 - 4 if (pet.hungerLevel // 10 - 4) > 0 else 0
     tikToDeath_number = 1080 - (hunger_stage - 1) * 180
     tikToDeath_currentNumber = user.hungerDeathTik
@@ -225,6 +228,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
 
     ##########################################
 
+    #Функция сохранения прогресса
     def save():
         user.moodLevel = pet.moodLevel
         user.hungerLevel = pet.hungerLevel
@@ -267,8 +271,25 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                     isShop_active = False
                     isStock_active = False
 
+            #ОБработка события настроения
+            if (isFood_target_active == False):
+                if (pygame.mouse.get_pos()[0] >= pet.x and pygame.mouse.get_pos()[0] <= pet.x + pet.width):
+                    if (pygame.mouse.get_pos()[1] >= pet.y and pygame.mouse.get_pos()[1] <= pet.y + pet.height):
+                        deltaX = pygame.mouse.get_pos()[0] - mood_posX
+                        if (deltaX <= 0):
+                            deltaX *= -1
+
+                        deltaY = pygame.mouse.get_pos()[1] - mood_posY
+                        if (deltaY <= 0):
+                            deltaY *= -1
+
+                        if (deltaX >= pet.width //2 or deltaY >= pet.height // 2):
+                            mood_posX, mood_posY = pygame.mouse.get_pos()
+                            pet.moodLevel += 1;
+
             #Обработка событий по нажатию ЛКМ
             if (e.type == pygame.MOUSEBUTTONDOWN and e.button == 1):
+                #ОБработка событий при активном игровом интерфейсе
                 if (isMain_active):
                     if (isFood_target_active):
                         if (pygame.mouse.get_pos()[0] >= pet.x and pygame.mouse.get_pos()[0] <= pet.x + pet.width):
@@ -284,29 +305,23 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                         else:
                             isFood_target_active = False
 
-                    else:
-                        if (pygame.mouse.get_pos()[0] >= pet.x and pygame.mouse.get_pos()[0] <= pet.x + pet.width):
-                            if (pygame.mouse.get_pos()[1] >= pet.y and pygame.mouse.get_pos()[1] <= pet.y + pet.height):
-                                pet.moodLevel += 1
-
                     if (len(poops_heap) != 0):
                         for poop in poops_heap:
                             if (pygame.mouse.get_pos()[0] >= poop.x and pygame.mouse.get_pos()[0] <= poop.x + poop.width):
                                 if (pygame.mouse.get_pos()[1] >= poop.y and pygame.mouse.get_pos()[1] <= poop.y + poop.height):
                                     poops_heap.remove(poop)
 
+                #Обработка событий во время игры "работа"
                 if (isWork_active):
                     if (isCoin_active):
                         if (pygame.mouse.get_pos()[0] >= coin_triggerX and pygame.mouse.get_pos()[0] <= coin_triggerX + coinSizeX):
                             if (pygame.mouse.get_pos()[1] >= coin_triggerY and pygame.mouse.get_pos()[1] <= coin_triggerY + coinSizeY):
                                 isCoin_active = False
-                                wait_time = random.randrange(2, 4)
-                                wait_currentTime = time.time()
-                                time_coin = 0
 
-                                coin_sum += 1
-                                print(str(coin_sum))
+                                coin_sum += 2
+                                #print(str(coin_sum))
 
+                #Обработка событий магазина
                 if (isShop_active):
                     startX = -1 * int(shop_board_image.get_width() // 4)
                     stepX = int(shop_board_image.get_width() // 2)
@@ -337,6 +352,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                         startX = -1 * int(shop_board_image.get_width() // 4)
                         startY += stepY
 
+                #Обработка событий инвентаря
                 if (isStock_active):
                     startX = -1 * int(stock_board_image.get_width() // 4)
                     stepX = int(stock_board_image.get_width() // 2)
@@ -368,6 +384,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                         startX = -1 * int(stock_board_image.get_width() // 4)
                         startY += stepY
 
+                #Обработка событий при активной меню-доске
                 if (isBoard_active):
                     if (pygame.mouse.get_pos()[0] >= work_triggerX1 and pygame.mouse.get_pos()[0] <= work_triggerX2):
                         if (pygame.mouse.get_pos()[1] >= work_triggerY1 and pygame.mouse.get_pos()[1] <= work_triggerY2):
@@ -392,8 +409,6 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                         if (pygame.mouse.get_pos()[1] >= menu_triggerY1 and pygame.mouse.get_pos()[1] <= menu_triggerY2):
                             save()
                             return
-
-
 
         #Отрисовка и обновление
 
@@ -420,9 +435,12 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
         elif (hour <= 0):
             background_stage = 10
 
-
+        # Отрисовка и расчет при активном игровом интерфейсе
         if (isMain_active):
             background = background_images[background_stage].copy()
+
+            coin = pygame.transform.scale(coin_image.copy(), (coinSizeX // 2, coinSizeY // 2))
+            coin_sum_text = font.render((" :  " + str(coin_sum)), False, (0, 0, 0)).convert()
 
             if (hour > 21 or hour <= 5):
                 background.blit(pet.object[1], (pet.x, pet.y))
@@ -440,7 +458,10 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
             background.blit(day_timer, (10, 40))
             background.blit(hungerLevel, (10, 70))
             background.blit(moodLevel, (10, 100))
+            background.blit(coin, (10, 135))
+            background.blit(coin_sum_text, (10 + coinSizeX // 2, (135 + (coinSizeY // 2 - coin_sum_text.get_height()) // 2)))
 
+        #Отрисовка и расчет при активной игре "работа"
         if (isWork_active):
             background = work_background_image.copy()
             coin = coin_image.copy()
@@ -453,8 +474,8 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
                 if (time.time() - time_coin <= timeOf_coin):
                     isCoin_active = True
                 else:
-                    coin_triggerX, coin_triggerY = (random.randrange(5, displayWidth - coinSizeX - 5),
-                                           random.randrange(5, displayHeight - coinSizeY - 5))
+                    coin_triggerX = random.randrange(5, displayWidth - coinSizeX - 5)
+                    coin_triggerY = random.randrange(5, displayHeight - coinSizeY - 5)
 
                     wait_time = random.randrange(1, 3)
                     wait_currentTime = time.time()
@@ -468,6 +489,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
             background.blit(coin, (10, 10))
             background.blit(coin_sum_text, (15 + coinSizeX, (10 + coin_sum_text.get_height()) // 2))
 
+        #Отрисовка и расчет при активном магазине
         if (isShop_active):
             shopBoard = shop_board_image.copy()
 
@@ -494,6 +516,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
 
             background.blit(shopBoard, (displayWidth - shopBoard.get_width(), 0))
 
+        #Отрисовка и расчет при активном инвентаре
         if (isStock_active):
             stockBoard = stock_board_image.copy()
 
@@ -572,6 +595,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
 
         #########################################
 
+        #Генерация poop
         if (len(timeToPoop_heap) != 0 and currentTime >= timeToPoop_heap[0]):
             poopX = random.randrange(10, displayWidth - poopSizeX - 10)
             poopY = random.randrange(displayHeight - int(displayHeight // 6.857142857), displayHeight - poopSizeY - 5)
@@ -587,6 +611,7 @@ def gameLoop(user, displayWidth, displayHeight, isFullscreen, title, font):
 
         #########################################
 
+        #Расчет тикитов смерти
         hunger_stage = (pet.hungerLevel // 10 - 4) if (pet.hungerLevel // 10 - 4) > 0 else 0
         tikToDeath_number = (1080 - (hunger_stage - 1) * 180) if (hunger_stage - 1) >= 0 else 0
         if (hunger_stage == 0):

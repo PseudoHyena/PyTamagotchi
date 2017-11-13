@@ -37,8 +37,8 @@ class User:
             for i in range(1, 11):
                 elem = ET.SubElement(self._xRoot.find("Food"), ("food" + str(i)))
                 elem.set("count", "0")
-                elem.set("saturation", str((i % 5 + 1) * 3))
                 elem.set("price", str((i % 3 + 1) * 15))
+                elem.set("saturation", str(((i % 3 + 1) * 15) // 5 * 4))
 
             self._xTree.write(name)
 
