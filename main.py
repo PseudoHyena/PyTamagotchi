@@ -86,6 +86,11 @@ else:
 config_file.close()
 ######################################
 
+#Проверка наличия Saves директории
+if (os.path.exists("Saves") == False):
+    os.makedirs("Saves")
+#######################################
+
 #Инициализация движка и шрифта
 pygame.init()
 pygame.font.init()
